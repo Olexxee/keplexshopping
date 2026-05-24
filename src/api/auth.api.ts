@@ -17,6 +17,7 @@ export const refreshSession = async (): Promise<void> => {
 
 export const getMe = async (): Promise<User> => {
   const res = await api.get("/auth/me");
+  if (!res.data.data) throw new Error("Not authenticated");
   return res.data.data;
 };
 

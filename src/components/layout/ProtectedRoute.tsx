@@ -4,9 +4,9 @@ import { useMe } from "../../hooks/useAuth";
 export const ProtectedRoute = () => {
   const { data: user, isLoading } = useMe();
 
-  if (isLoading) return null; // or a spinner
+  if (isLoading) return null;
 
-  if (!user) {
+  if (!user || user === null) {
     return <Navigate to="/auth" replace />;
   }
 
