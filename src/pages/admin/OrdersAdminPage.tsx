@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useAllOrders, useUpdateOrderStatus } from "../../hooks/useAdminOrders";
 import { DataTable } from "../../components/ui/DataTable";
 import { PageHeader } from "../../components/ui/PageHeader";
-import { StatusBadge } from "../../components/ui/StatusBadge";
 import type { Order } from "../../types/order.types";
 
 const ORDER_STATUSES = [

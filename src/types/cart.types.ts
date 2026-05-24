@@ -1,5 +1,3 @@
-import type { CatalogItem } from "./catalog.types";
-
 export interface CartItemProduct {
   id: string;
   name: string;

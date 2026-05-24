@@ -7,7 +7,7 @@ export const useUpdateProfile = () => {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: Partial<Pick<User, "name" | "email">>) =>
+    mutationFn: (payload: Partial<User>) =>
       updateMe(payload),
     onSuccess: (updatedUser) => {
       // Update the auth cache directly so the name in the header updates instantly

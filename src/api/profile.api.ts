@@ -7,7 +7,7 @@ export const getMe = async (): Promise<User> => {
 };
 
 export const updateMe = async (
-  payload: Partial<Pick<User, "name" | "email">>,
+  payload: Partial<Record<"name" | "email", string>>,
 ): Promise<User> => {
   const res = await api.patch("/auth/me", payload);
   return res.data.data;

@@ -4,7 +4,7 @@ import { getErrorMessage } from "../../utils/error";
 
 export const RegisterForm = () => {
   const { mutate: register, isPending } = useRegister();
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ fullName: "", email: "", password: "", phone: "" });
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -32,7 +32,7 @@ export const RegisterForm = () => {
         <input
           type="text"
           name="name"
-          value={form.name}
+          value={form.fullName}
           onChange={handleChange}
           required
           placeholder="John Doe"

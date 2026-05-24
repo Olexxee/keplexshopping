@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { Outlet, NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -73,7 +73,7 @@ export const AdminLayout = () => {
                 ${collapsed ? "justify-center" : ""}`
               }
             >
-              {({ isActive }) => (
+              {({ }) => (
                 <>
                   <Icon size={18} className="shrink-0" />
                   {!collapsed && <span className="truncate">{label}</span>}
@@ -90,7 +90,7 @@ export const AdminLayout = () => {
           {!collapsed && (
             <div className="mb-2 px-2">
               <p className="text-xs font-medium text-white truncate">
-                {user?.name}
+                {user?.fullName}
               </p>
               <p className="text-xs text-gray-500 truncate">{user?.role}</p>
             </div>
@@ -111,7 +111,7 @@ export const AdminLayout = () => {
         <header className="h-16 bg-white border-b border-gray-100 flex items-center px-6">
           <p className="text-sm text-gray-400">
             Logged in as{" "}
-            <span className="font-medium text-gray-700">{user?.name}</span>
+            <span className="font-medium text-gray-700">{user?.fullName}</span>
             <span className="ml-2 inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full capitalize">
               {user?.role}
             </span>

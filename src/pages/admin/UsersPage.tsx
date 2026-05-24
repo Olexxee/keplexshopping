@@ -47,7 +47,7 @@ export const UsersPage = () => {
       header: "Name",
       render: (row: User) => (
         <div>
-          <p className="font-medium text-gray-900">{row.name}</p>
+          <p className="font-medium text-gray-900">{row.fullName}</p>
           <p className="text-xs text-gray-400">{row.email}</p>
         </div>
       ),
