@@ -8,6 +8,7 @@ export const checkout = async (payload: CheckoutPayload): Promise<Order> => {
 
 export const getMyOrders = async (): Promise<Order[]> => {
   const res = await api.get("/orders/me");
+  console.log("Fetched my orders:", res.data.data);
   return res.data.data;
 };
 

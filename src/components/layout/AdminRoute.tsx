@@ -1,12 +1,15 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useMe } from "../../hooks/useAuth";
 
+
 export const AdminRoute = () => {
   const { data: user, isLoading } = useMe();
 
-  if (isLoading) return null; // ProtectedRoute above already shows the loader
+  console.log("user role:", user?.role);
 
-  if (!user || (user.role !== "admin" && user.role !== "staff")) {
+  if (isLoading) return null;
+
+  if (!user || !["SUPER_ADMIN", "ADMIN", "STAFF"].includes(user.role)) {
     return <Navigate to="/dashboard" replace />;
   }
 

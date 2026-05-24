@@ -1,13 +1,21 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: "user" | "staff" | "admin";
-}
-
 export interface AuthResponse {
   user: User;
-  // no token field — server sets httpOnly cookie directly
+}
+
+export interface ApiError {
+  message: string;
+  errors?: Record<string, string[]>;
+}
+
+export interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  role: "SUPER_ADMIN" | "ADMIN" | "STAFF" | "USER";
+  status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface LoginPayload {
@@ -16,12 +24,8 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload {
-  name: string;
+  fullName: string;
   email: string;
+  phone: string;
   password: string;
-}
-
-export interface ApiError {
-  message: string;
-  errors?: Record<string, string[]>;
 }

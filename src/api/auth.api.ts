@@ -1,33 +1,26 @@
 import { api } from "../lib/api";
-import type {
-  AuthResponse,
-  LoginPayload,
-  RegisterPayload,
-  User,
-} from "../types/auth.types";
+import type { LoginPayload, RegisterPayload, User } from "../types/auth.types";
 
-export const login = async (payload: LoginPayload): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>("/auth/login", payload);
-  return response.data;
+export const login = async (payload: LoginPayload): Promise<User> => {
+  const res = await api.post("/auth/login", payload);
+  return res.data.data.user;
 };
 
-export const register = async (
-  payload: RegisterPayload,
-): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>("/auth/register", payload);
-  return response.data;
+export const register = async (payload: RegisterPayload): Promise<User> => {
+  const res = await api.post("/auth/register", payload);
+  return res.data.data.user;
 };
 
-export const refreshSession = async (): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>("/auth/refresh");
-  return response.data;
+export const refreshSession = async (): Promise<void> => {
+  await api.post("/auth/refresh");
 };
 
 export const getMe = async (): Promise<User> => {
-  const response = await api.get<User>("/auth/me");
-  return response.data;
+  const res = await api.get("/auth/me");
+  console.log("getMe raw response:", res.data);
+  return res.data.data;
 };
 
 export const logout = async (): Promise<void> => {
-  await api.post("/auth/logout"); // server clears the cookie
+  await api.post("/auth/logout");
 };

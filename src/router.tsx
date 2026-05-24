@@ -14,6 +14,8 @@ import { OrderDetailPage } from "./pages/shop/OrderDetailPage";
 import { PaymentCallbackPage } from "./pages/payment/PaymentCallbackPage";
 import { AdminOverviewPage } from "./pages/admin/AdminOverviewPage";
 import { UsersPage } from "./pages/admin/UsersPage";
+import { AddressesPage } from "./pages/dashboard/AddressesPage";
+import { ProfilePage } from "./pages/dashboard/ProfilePage";
 import { ItemsAdminPage } from "./pages/admin/ItemsAdminPage";
 import { CategoriesPage } from "./pages/admin/CategoriesPage";
 import { OrdersAdminPage } from "./pages/admin/OrdersAdminPage";
@@ -39,6 +41,8 @@ export const router = createBrowserRouter([
           { path: "/checkout", element: <CheckoutPage /> },
           { path: "/orders", element: <MyOrdersPage /> },
           { path: "/orders/:id", element: <OrderDetailPage /> },
+          { path: "/addresses", element: <AddressesPage /> },
+          { path: "/profile", element: <ProfilePage /> },
         ],
       },
 

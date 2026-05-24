@@ -2,17 +2,13 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useMe } from "../../hooks/useAuth";
 
 export const ProtectedRoute = () => {
-  const { data: user, isLoading, isError } = useMe();
+  const { data: user, isLoading } = useMe();
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className="text-gray-400 text-sm">Loading...</span>
-      </div>
-    );
-  }
+  console.log("user role:", user?.role);
 
-  if (isError || !user) {
+  if (isLoading) return null; // or a spinner
+
+  if (!user) {
     return <Navigate to="/auth" replace />;
   }
 

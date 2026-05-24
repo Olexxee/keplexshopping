@@ -9,18 +9,18 @@ export const useMe = () =>
   useQuery({
     queryKey: AUTH_KEY,
     queryFn: getMe,
-    retry: false, // don't retry on 401 — user is just logged out
-    staleTime: Infinity, // user object doesn't change mid-session
+    retry: false,
+    staleTime: Infinity,
+    refetchOnMount: true,
   });
 
 export const useLogin = () => {
   const qc = useQueryClient();
   const navigate = useNavigate();
-
   return useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
-    onSuccess: (data) => {
-      qc.setQueryData(AUTH_KEY, data.user); // seed the cache immediately
+    onSuccess: (user) => {
+      qc.setQueryData(AUTH_KEY, user); // user is now the flat user object
       navigate("/dashboard");
     },
   });
@@ -29,11 +29,10 @@ export const useLogin = () => {
 export const useRegister = () => {
   const qc = useQueryClient();
   const navigate = useNavigate();
-
   return useMutation({
     mutationFn: (payload: RegisterPayload) => register(payload),
-    onSuccess: (data) => {
-      qc.setQueryData(AUTH_KEY, data.user);
+    onSuccess: (user) => {
+      qc.setQueryData(AUTH_KEY, user);
       navigate("/dashboard");
     },
   });
@@ -42,11 +41,10 @@ export const useRegister = () => {
 export const useLogout = () => {
   const qc = useQueryClient();
   const navigate = useNavigate();
-
   return useMutation({
     mutationFn: logout,
     onSettled: () => {
-      qc.clear(); // wipe all cached data
+      qc.clear();
       navigate("/auth");
     },
   });

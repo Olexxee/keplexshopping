@@ -78,7 +78,7 @@ export const AppLayout = () => {
           ))}
 
           {/* Admin shortcut — only visible to staff/admin */}
-          {(user?.role === "admin" || user?.role === "staff") && (
+          {user?.role && ["SUPER_ADMIN", "ADMIN", "STAFF"].includes(user.role) && (
             <NavLink
               to="/admin"
               className={({ isActive }) =>
@@ -104,7 +104,7 @@ export const AppLayout = () => {
           {!collapsed && (
             <div className="mb-2 px-2">
               <p className="text-xs font-medium text-gray-900 truncate">
-                {user?.name}
+                {user?.fullName}
               </p>
               <p className="text-xs text-gray-400 truncate">{user?.email}</p>
             </div>
@@ -125,7 +125,7 @@ export const AppLayout = () => {
           <p className="text-sm text-gray-400">
             Welcome back,{" "}
             <span className="font-medium text-gray-700">
-              {user?.name?.split(" ")[0]}
+              {user?.fullName?.split(" ")[0]}
             </span>
           </p>
         </header>

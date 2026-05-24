@@ -1,48 +1,87 @@
-import axios from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+
+import { queryClient } from "./queryClient";
+
+type RetryableRequestConfig = InternalAxiosRequestConfig & {
+  _retry?: boolean;
+};
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 let isRefreshing = false;
+
 let failedQueue: Array<{
   resolve: () => void;
-  reject: (err: unknown) => void;
+  reject: (error: unknown) => void;
 }> = [];
 
-const processQueue = (error: unknown) => {
-  failedQueue.forEach((p) => (error ? p.reject(error) : p.resolve()));
+const processQueue = (error?: unknown) => {
+  failedQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error);
+    } else {
+      promise.resolve();
+    }
+  });
+
   failedQueue = [];
 };
 
+const EXCLUDED_ROUTES = ["/auth/login", "/auth/register", "/auth/refresh"];
+
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const original = error.config;
 
-    // Not a 401, or already a retry — bail out
-    if (error.response?.status !== 401 || original._retry) {
+  async (error: AxiosError) => {
+    const originalRequest = error.config as RetryableRequestConfig;
+
+    if (!originalRequest) {
       return Promise.reject(error);
     }
 
-    // Queue subsequent 401s while refresh is in flight
-    if (isRefreshing) {
-      return new Promise<void>((resolve, reject) => {
-        failedQueue.push({ resolve, reject });
-      }).then(() => api(original));
+    // Ignore non-401s
+    if (error.response?.status !== 401) {
+      return Promise.reject(error);
     }
 
-    original._retry = true;
+    // Ignore auth endpoints
+    if (EXCLUDED_ROUTES.some((route) => originalRequest.url?.includes(route))) {
+      return Promise.reject(error);
+    }
+
+    // Prevent infinite retry loops
+    if (originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    // Queue requests while refresh is happening
+    if (isRefreshing) {
+      return new Promise<void>((resolve, reject) => {
+        failedQueue.push({
+          resolve,
+          reject,
+        });
+      }).then(() => api(originalRequest));
+    }
+
+    originalRequest._retry = true;
     isRefreshing = true;
 
     try {
-      await api.post("/auth/refresh"); // server rotates the httpOnly cookie
-      processQueue(null);
-      return api(original); // retry the original request
+      await api.post("/auth/refresh");
+
+      processQueue();
+
+      return api(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError);
-      window.location.href = "/auth"; // session dead — send to login
+
+      // collapse auth state naturally
+      queryClient.setQueryData(["auth", "me"], null);
+
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;
