@@ -4,8 +4,6 @@ import { useMe } from "../../hooks/useAuth";
 export const ProtectedRoute = () => {
   const { data: user, isLoading } = useMe();
 
-  console.log("user role:", user?.role);
-
   if (isLoading) return null; // or a spinner
 
   if (!user) {

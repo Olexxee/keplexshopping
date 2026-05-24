@@ -17,7 +17,6 @@ export const refreshSession = async (): Promise<void> => {
 
 export const getMe = async (): Promise<User> => {
   const res = await api.get("/auth/me");
-  console.log("getMe raw response:", res.data);
   return res.data.data;
 };
 
