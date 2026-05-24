@@ -11,7 +11,6 @@ export const useMe = () =>
     queryFn: getMe,
     retry: false,
     staleTime: Infinity,
-    refetchOnMount: true,
   });
 
 export const useLogin = () => {
