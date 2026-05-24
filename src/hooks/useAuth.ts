@@ -43,9 +43,9 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: logout,
     onSettled: () => {
-      qc.setQueryData(AUTH_KEY, null);
+      qc.removeQueries({ queryKey: AUTH_KEY });
       qc.clear();
-      navigate("/auth");
+      navigate("/auth", { replace: true });
     },
   });
 };
