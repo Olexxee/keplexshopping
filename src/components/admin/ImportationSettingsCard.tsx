@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useUpdateBusinessConfig } from "../../hooks/useBusinessConfigMutations";
 
 interface Props {
   settings: {
@@ -80,7 +81,4 @@ export const ImportationSettingsCard = ({ settings }: Props) => {
     </div>
   );
 };
-function useUpdateBusinessConfig(): { mutate: any; isPending: any; } {
-  throw new Error("Function not implemented.");
-}
 

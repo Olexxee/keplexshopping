@@ -1,6 +1,6 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import type { BusinessConfigResponse } from "../types/business-config.types";
-
 
 export type BusinessConfigKey =
   | "training_programs"
@@ -13,5 +13,17 @@ export const updateConfigSection = async (
   value: unknown,
 ): Promise<BusinessConfigResponse> => {
   const { data } = await api.patch(`/business-config/${key}`, { value });
-  return data;
+  return data.data;
+};
+
+export const useUpdateBusinessConfig = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ key, value }: { key: BusinessConfigKey; value: unknown }) =>
+      updateConfigSection(key, value),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["business-config"] });
+    },
+  });
 };

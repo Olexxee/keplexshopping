@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useUpdateBusinessConfig } from "../../hooks/useBusinessConfigMutations";
 
 export const PricingRulesCard = ({ rules }: any) => {
   const [form, setForm] = useState(rules);
@@ -46,7 +47,4 @@ export const PricingRulesCard = ({ rules }: any) => {
     </div>
   );
 };
-function useUpdateBusinessConfig(): { mutate: any; isPending: any; } {
-  throw new Error("Function not implemented.");
-}
 

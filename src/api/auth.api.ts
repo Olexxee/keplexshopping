@@ -15,6 +15,32 @@ export const refreshSession = async (): Promise<void> => {
   await api.post("/auth/refresh");
 };
 
+export const updateProfile = async (payload: {
+  fullName: string;
+  phone?: string;
+}) => {
+  const res = await api.patch(
+    "/auth/me",
+    payload,
+  );
+
+  return res.data.data;
+};
+
+export const changePassword = async (
+  payload: {
+    currentPassword: string;
+    newPassword: string;
+  },
+) => {
+  const res = await api.patch(
+    "/auth/change-password",
+    payload,
+  );
+
+  return res.data.data;
+};
+
 export const getMe = async (): Promise<User> => {
   const res = await api.get("/auth/me");
   if (!res.data.data) throw new Error("Not authenticated");

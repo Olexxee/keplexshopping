@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag, ChevronRight } from "lucide-react";
 import { useOrders } from "../../hooks/useOrders";
+import { AccountTabs } from "../../components/account/AccountTabs";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
@@ -44,11 +45,12 @@ export const MyOrdersPage = () => {
       {/* Header */}
       <Card>
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Account
-            </p>
-            <h1 className="text-2xl font-bold text-gray-900 mt-1">My Orders</h1>
+          <div className="space-y-6">
+            <AccountTabs />
+
+            <div>
+              <h1 className="text-3xl font-bold">My Orders</h1>
+            </div>
           </div>
           <ShoppingBag className="h-6 w-6 text-gray-300" />
         </div>

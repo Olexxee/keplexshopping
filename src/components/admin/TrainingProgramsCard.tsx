@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { TrainingProgram } from "../../types/business-config.types";
+import { useUpdateBusinessConfig } from "../../hooks/useBusinessConfigMutations";
 
 interface Props {
   programs: TrainingProgram[];
@@ -85,7 +86,4 @@ export const TrainingProgramsCard = ({ programs }: Props) => {
     </div>
   );
 };
-function useUpdateBusinessConfig(): { mutate: any; isPending: any; } {
-  throw new Error("Function not implemented.");
-}
 

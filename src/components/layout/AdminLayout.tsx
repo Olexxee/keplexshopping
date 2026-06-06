@@ -23,6 +23,7 @@ const NAV_ITEMS = [
   { to: "/admin/orders", icon: ShoppingBag, label: "Orders" },
   { to: "/admin/settings", icon: Building2, label: "Settings" },
   { to: "/admin/audit", icon: ClipboardList, label: "Audit Logs" },
+  {to: "/admin/business-config", icon: Building2, label: "Business Config"},
 ];
 
 export const AdminLayout = () => {

@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { MapPin, RotateCcw, XCircle } from "lucide-react";
 
 import { useOrder } from "../../hooks/useOrder";
+import { AccountTabs } from "../../components/account/AccountTabs";
 import { useCancelOrder } from "../../hooks/useCancelOrder";
 import { initializePayment } from "../../api/payment.api";
 
@@ -64,6 +65,7 @@ export const OrderDetailPage = () => {
   if (!order) {
     return (
       <Card className="py-12 text-center">
+        <AccountTabs />
         <p className="text-gray-500">Order not found.</p>
         <div className="mt-4">
           <Link to="/orders">
