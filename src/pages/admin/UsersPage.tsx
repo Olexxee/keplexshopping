@@ -1,13 +1,17 @@
 import { useState } from "react";
+
 import {
   useUsers,
   useUpdateUserRole,
   useUpdateUserStatus,
   useCreateStaff,
 } from "../../hooks/useAdmin";
+
 import { DataTable } from "../../components/ui/DataTable";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { Modal } from "../../components/ui/Modal";
+import { Button } from "../../components/ui/Button";
+
 import { getErrorMessage } from "../../utils/error";
 import type { User } from "../../types/auth.types";
 
@@ -94,12 +98,9 @@ export const UsersPage = () => {
         label="Admin"
         title="Users"
         action={
-          <button
-            onClick={() => setStaffModal(true)}
-            className="bg-black text-white rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-gray-800 transition"
-          >
+          <Button size="sm" onClick={() => setStaffModal(true)}>
             + Add staff
-          </button>
+          </Button>
         }
       />
 
@@ -111,7 +112,6 @@ export const UsersPage = () => {
         emptyMessage="No users found."
       />
 
-      {/* Create staff modal */}
       <Modal
         open={staffModal}
         onClose={() => setStaffModal(false)}
@@ -123,6 +123,7 @@ export const UsersPage = () => {
               {formError}
             </div>
           )}
+
           {(["name", "email", "password"] as const).map((field) => (
             <div key={field} className="space-y-1">
               <label className="text-sm font-medium text-gray-700 capitalize">
@@ -145,6 +146,7 @@ export const UsersPage = () => {
               />
             </div>
           ))}
+
           <div className="space-y-1">
             <label className="text-sm font-medium text-gray-700">Role</label>
             <select
@@ -161,13 +163,10 @@ export const UsersPage = () => {
               <option value="admin">Admin</option>
             </select>
           </div>
-          <button
-            type="submit"
-            disabled={creating}
-            className="w-full bg-black text-white rounded-xl py-2.5 text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition"
-          >
+
+          <Button type="submit" fullWidth disabled={creating}>
             {creating ? "Creating..." : "Create staff member"}
-          </button>
+          </Button>
         </form>
       </Modal>
     </div>

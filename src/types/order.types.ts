@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export type OrderStatus =
   | "PENDING"
   | "CONFIRMED"
@@ -11,31 +13,56 @@ export interface OrderItemProduct {
   media: { id: string; url: string }[];
 }
 
+export interface Payment {
+  id: string;
+  reference: string;
+  status: "PENDING" | "SUCCESS" | "FAILED" | "ABANDONED" | "REVERSED";
+
+  authorizationUrl?: string;
+}
+
 export interface OrderItem {
   id: string;
   quantity: number;
-  unitPriceSnapshot: number | string;
-  totalPrice: number | string;
+  unitPriceSnapshot: number;
+  totalPrice: number;
   item: OrderItemProduct;
 }
 
 export interface Order {
+  shippingLabel: import("react/jsx-runtime").JSX.Element;
+  address: any;
+  shippingStreet: ReactNode;
+  shippingCity: ReactNode;
+  shippingState: ReactNode;
+  shippingCountry: ReactNode;
   id: string;
   status: OrderStatus;
   totalAmount: number | string;
-  createdAt: string;
-  items: OrderItem[];
+
   customerName: string;
   customerEmail?: string;
   customerPhone?: string;
+
   notes?: string;
-  addressId?: string;
+
+  createdAt: string;
+
+  items: OrderItem[];
+
+  payments?: Payment[];
+}
+
+export interface PaginatedOrders {
+  data: Order[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+  };
 }
 
 export interface CheckoutPayload {
-  customerName: string;
-  customerPhone: string;
-  customerEmail?: string;
+  addressId: string;
   notes?: string;
-  addressId?: string;
 }

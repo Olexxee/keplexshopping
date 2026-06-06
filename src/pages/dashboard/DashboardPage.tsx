@@ -1,66 +1,39 @@
 import { useMe } from "../../hooks/useAuth";
-import { useMyOrders } from "../../hooks/useOrders";
-import { useCart } from "../../hooks/useCart";
+import { useOrders } from "../../hooks/useOrders";
 import { useAddresses } from "../../hooks/useAddresses";
-import { useLogout } from "../../hooks/useAuth";
-import { StatCard } from "../../components/ui/StatCard";
-import { LogOut } from "lucide-react";
+
+import { DashboardStats } from "../../components/dashboard/DashboardStats";
+import { RecentOrdersCard } from "../../components/dashboard/RecentOrdersCard";
+import { DefaultAddressCard } from "../../components/dashboard/DefaultAddressCard";
 
 export const DashboardPage = () => {
   const { data: user } = useMe();
-  const { data: orders } = useMyOrders();
-  const { data: cart } = useCart();
-  const { data: addresses } = useAddresses();
-  const { mutate: logout } = useLogout();
 
-  const cartItemCount = (cart as any)?.totalItems ?? 0;
+  const { data: ordersData } = useOrders();
+  const orders = Array.isArray(ordersData) ? ordersData : ordersData?.data ?? [];
+
+  const { data: addresses = [] } = useAddresses();
 
   return (
     <div className="space-y-6">
-      {/* Welcome banner */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-wide text-gray-400">
-              Overview
-            </p>
-            <h1 className="text-3xl font-bold mt-2">
-              Welcome back{user?.fullName ? `, ${user.fullName.split(" ")[0]}` : ""}
-            </h1>
-            <p className="text-gray-500 mt-3">
-              Manage your orders, profile, and addresses from your dashboard.
-            </p>
-          </div>
-          <button
-            onClick={() => logout()}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition"
-          >
-            <LogOut size={15} />
-            Logout
-          </button>
-        </div>
+      <div className="bg-white rounded-3xl border border-slate-200 p-6">
+        <p className="text-sm text-slate-400">Overview</p>
+
+        <h1 className="text-3xl font-bold mt-2">
+          Welcome back, {user?.fullName?.split(" ")[0]}
+        </h1>
+
+        <p className="text-slate-500 mt-2">
+          Here's what's happening with your account.
+        </p>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <StatCard
-          label="Orders"
-          value={Array.isArray(orders) ? orders.length : 0}
-          sub={
-            Array.isArray(orders) && orders.length === 1
-              ? "1 order placed"
-              : `${Array.isArray(orders) ? orders.length : 0} orders placed`
-          }
-        />
-        <StatCard
-          label="Active Cart"
-          value={cartItemCount}
-          sub={cartItemCount === 1 ? "1 item" : `${cartItemCount} items`}
-        />
-        <StatCard
-          label="Saved Addresses"
-          value={Array.isArray(addresses) ? addresses.length : 0}
-        />
+      <DashboardStats orders={orders} addresses={addresses} />
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <RecentOrdersCard orders={orders} />
+
+        <DefaultAddressCard addresses={addresses} />
       </div>
     </div>
   );

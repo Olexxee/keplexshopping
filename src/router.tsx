@@ -5,9 +5,10 @@ import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { AdminRoute } from "./components/layout/AdminRoute";
 import { AuthContainer } from "./components/auth/AuthContainer";
 import { DashboardPage } from "./pages/dashboard/DashboardPage";
-import { CatalogPage } from "./pages/shop/CatalogPage";
+import { CatalogPage } from "./pages/shop/CategoriesPage";
 import { ItemDetailPage } from "./pages/shop/ItemDetailPage";
 import { CartPage } from "./pages/shop/CartPage";
+import { BusinessConfigPage } from "./pages/admin/BusinessConfigPage";
 import { CheckoutPage } from "./pages/shop/CheckoutPage";
 import { MyOrdersPage } from "./pages/shop/MyOrdersPage";
 import { OrderDetailPage } from "./pages/shop/OrderDetailPage";
@@ -17,10 +18,10 @@ import { UsersPage } from "./pages/admin/UsersPage";
 import { AddressesPage } from "./pages/dashboard/AddressesPage";
 import { ProfilePage } from "./pages/dashboard/ProfilePage";
 import { ItemsAdminPage } from "./pages/admin/ItemsAdminPage";
-import { CategoriesPage } from "./pages/admin/CategoriesPage";
-import { OrdersAdminPage } from "./pages/admin/OrdersAdminPage";
+import { CategoriesPage } from "./pages/admin/CatalogPage";
+import { AdminOrderDetailPage } from "./pages/admin/OrdersAdminPage";
 import { SettingsPage } from "./pages/admin/SettingsPage";
-import { AuditPage } from "./pages/admin/AuditPage";
+import { AuditPage } from "./pages/admin/AuditPage";    
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/dashboard" replace /> },
@@ -55,8 +56,12 @@ export const router = createBrowserRouter([
               { path: "/admin", element: <AdminOverviewPage /> },
               { path: "/admin/users", element: <UsersPage /> },
               { path: "/admin/items", element: <ItemsAdminPage /> },
+              {
+                path: "/admin/business-config",
+                element: <BusinessConfigPage />,
+              },
               { path: "/admin/categories", element: <CategoriesPage /> },
-              { path: "/admin/orders", element: <OrdersAdminPage /> },
+              { path: "/admin/orders", element: <AdminOrderDetailPage /> },
               { path: "/admin/settings", element: <SettingsPage /> },
               { path: "/admin/audit", element: <AuditPage /> },
             ],

@@ -1,16 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMyOrders, getOrderById } from "../api/order.api";
+import { getMyOrders } from "../api/order.api";
 
-export const useMyOrders = () =>
-  useQuery({
-    queryKey: ["orders", "me"],
+export const useOrders = () => {
+  return useQuery({
+    queryKey: ["orders"],
     queryFn: getMyOrders,
   });
-
-export const useOrderById = (id: string) =>
-  useQuery({
-    queryKey: ["orders", id],
-    queryFn: () => getOrderById(id),
-    enabled: !!id,
-  });
-
+};

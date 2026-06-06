@@ -4,13 +4,15 @@ import type {
   PaymentVerifyResponse,
 } from "../types/payment.types";
 
+// POST /payments/order/:orderId/init
 export const initializePayment = async (
   orderId: string,
 ): Promise<PaymentInitResponse> => {
-  const res = await api.post(`/payments/orders/${orderId}/initialize`);
+  const res = await api.post(`/payments/order/${orderId}/init`);
   return res.data.data;
 };
 
+// GET /payments/verify/:reference
 export const verifyPayment = async (
   reference: string,
 ): Promise<PaymentVerifyResponse> => {

@@ -1,15 +1,29 @@
-interface PageHeaderProps {
-  label: string;
+import { Card } from "./Card";
+
+interface Props {
+  label?: string;
   title: string;
+  description?: string;
   action?: React.ReactNode;
 }
 
-export const PageHeader = ({ label, title, action }: PageHeaderProps) => (
-  <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex items-center justify-between gap-4">
-    <div>
-      <p className="text-sm uppercase tracking-wide text-gray-400">{label}</p>
-      <h1 className="text-2xl font-bold mt-1">{title}</h1>
-    </div>
-    {action && <div>{action}</div>}
-  </div>
-);
+export const PageHeader = ({ label, title, description, action }: Props) => {
+  return (
+    <Card padding="md" className="mb-6">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          {label && (
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              {label}
+            </p>
+          )}
+          <h1 className="text-2xl font-bold text-gray-900 mt-1">{title}</h1>
+          {description && (
+            <p className="text-sm text-gray-500 mt-2">{description}</p>
+          )}
+        </div>
+        {action && <div className="ml-4">{action}</div>}
+      </div>
+    </Card>
+  );
+};

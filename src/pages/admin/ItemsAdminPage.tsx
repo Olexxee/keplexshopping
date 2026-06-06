@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useItems } from "../../hooks/useItems";
 import { useCategories } from "../../hooks/useCategories";
 import {
@@ -6,11 +7,14 @@ import {
   useUpdateItem,
   useDeleteItem,
 } from "../../hooks/useAdminItems";
+
 import { DataTable } from "../../components/ui/DataTable";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { Modal } from "../../components/ui/Modal";
 import { ConfirmDialog } from "../../components/ui/ConfirmDialog";
 import { StatusBadge } from "../../components/ui/StatusBadge";
+import { Button } from "../../components/ui/Button";
+
 import { getErrorMessage } from "../../utils/error";
 import type { CatalogItem } from "../../types/catalog.types";
 
@@ -18,6 +22,7 @@ export const ItemsAdminPage = () => {
   const { data: items = [], isLoading } = useItems();
   const { data: categories = [] } = useCategories();
   const [slug, setSlug] = useState<string>("");
+
   const { mutate: createItem, isPending: creating } = useCreateItem();
   const { mutate: updateItem, isPending: updating } = useUpdateItem();
   const { mutate: deleteItem, isPending: deleting } = useDeleteItem();
@@ -32,6 +37,7 @@ export const ItemsAdminPage = () => {
     setSlug("");
     setFormModal(true);
   };
+
   const openEdit = (item: CatalogItem) => {
     setEditTarget(item);
     setSlug((item as CatalogItem & { slug?: string }).slug ?? "");
@@ -116,18 +122,16 @@ export const ItemsAdminPage = () => {
       header: "",
       render: (row: CatalogItem) => (
         <div className="flex items-center gap-2 justify-end">
-          <button
-            onClick={() => openEdit(row)}
-            className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs hover:bg-gray-50 transition"
-          >
+          <Button variant="secondary" size="sm" onClick={() => openEdit(row)}>
             Edit
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="danger"
+            size="sm"
             onClick={() => setDeleteTarget(row)}
-            className="px-3 py-1.5 rounded-lg border border-red-100 text-red-500 text-xs hover:bg-red-50 transition"
           >
             Delete
-          </button>
+          </Button>
         </div>
       ),
     },
@@ -139,12 +143,9 @@ export const ItemsAdminPage = () => {
         label="Admin"
         title="Items"
         action={
-          <button
-            onClick={openCreate}
-            className="bg-black text-white rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-gray-800 transition"
-          >
+          <Button size="sm" onClick={openCreate}>
             + New item
-          </button>
+          </Button>
         }
       />
 
@@ -156,7 +157,6 @@ export const ItemsAdminPage = () => {
         emptyMessage="No items yet."
       />
 
-      {/* Create / Edit modal */}
       <Modal
         open={formModal}
         onClose={() => setFormModal(false)}
@@ -280,21 +280,16 @@ export const ItemsAdminPage = () => {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={creating || updating}
-            className="w-full bg-black text-white rounded-xl py-2.5 text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition"
-          >
+          <Button type="submit" fullWidth disabled={creating || updating}>
             {creating || updating
               ? "Saving..."
               : editTarget
                 ? "Save changes"
                 : "Create item"}
-          </button>
+          </Button>
         </form>
       </Modal>
 
-      {/* Delete confirm */}
       <ConfirmDialog
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}

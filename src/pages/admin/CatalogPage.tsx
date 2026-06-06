@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useCategories } from "../../hooks/useCategories";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -7,10 +8,13 @@ import {
   deleteCategory,
 } from "../../api/category.api";
 import type { CategoryPayload } from "../../api/category.api";
+
 import { DataTable } from "../../components/ui/DataTable";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { Modal } from "../../components/ui/Modal";
 import { ConfirmDialog } from "../../components/ui/ConfirmDialog";
+import { Button } from "../../components/ui/Button";
+
 import { getErrorMessage } from "../../utils/error";
 import type { Category } from "../../types/catalog.types";
 
@@ -70,6 +74,7 @@ export const CategoriesPage = () => {
     setForm(EMPTY_FORM);
     setFormModal(true);
   };
+
   const openEdit = (cat: Category) => {
     setEditTarget(cat);
     setForm({
@@ -119,7 +124,9 @@ export const CategoriesPage = () => {
       header: "Active",
       render: (row: Category) => (
         <span
-          className={`text-xs font-medium ${row.isActive ? "text-emerald-600" : "text-gray-400"}`}
+          className={`text-xs font-medium ${
+            row.isActive ? "text-emerald-600" : "text-gray-400"
+          }`}
         >
           {row.isActive ? "Yes" : "No"}
         </span>
@@ -137,18 +144,16 @@ export const CategoriesPage = () => {
       header: "",
       render: (row: Category) => (
         <div className="flex items-center gap-2 justify-end">
-          <button
-            onClick={() => openEdit(row)}
-            className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs hover:bg-gray-50 transition"
-          >
+          <Button variant="secondary" size="sm" onClick={() => openEdit(row)}>
             Edit
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="danger"
+            size="sm"
             onClick={() => setDeleteTarget(row)}
-            className="px-3 py-1.5 rounded-lg border border-red-100 text-red-500 text-xs hover:bg-red-50 transition"
           >
             Delete
-          </button>
+          </Button>
         </div>
       ),
     },
@@ -160,12 +165,9 @@ export const CategoriesPage = () => {
         label="Admin"
         title="Categories"
         action={
-          <button
-            onClick={openCreate}
-            className="bg-black text-white rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-gray-800 transition"
-          >
+          <Button size="sm" onClick={openCreate}>
             + New category
-          </button>
+          </Button>
         }
       />
 
@@ -259,17 +261,13 @@ export const CategoriesPage = () => {
             </label>
           </div>
 
-          <button
-            type="submit"
-            disabled={creating || updating}
-            className="w-full bg-black text-white rounded-xl py-2.5 text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition"
-          >
+          <Button type="submit" fullWidth disabled={creating || updating}>
             {creating || updating
               ? "Saving..."
               : editTarget
                 ? "Save changes"
                 : "Create category"}
-          </button>
+          </Button>
         </form>
       </Modal>
 

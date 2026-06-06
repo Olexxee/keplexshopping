@@ -1,15 +1,8 @@
 import { api } from "../lib/api";
-
-export interface DashboardOverview {
-  totalUsers: number;
-  totalOrders: number;
-  totalRevenue: number | string;
-  totalItems: number;
-  pendingOrders?: number;
-  [key: string]: unknown; // backend may add more fields
-}
+import type { DashboardOverview } from "../types/dashboard.types";
 
 export const getDashboardOverview = async (): Promise<DashboardOverview> => {
-  const response = await api.get("/dashboard/overview");
-  return response.data.data;
+  const res = await api.get("/dashboard/overview");
+
+  return res.data.data;
 };

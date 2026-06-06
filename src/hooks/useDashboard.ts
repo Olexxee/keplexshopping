@@ -3,6 +3,6 @@ import { getDashboardOverview } from "../api/dashboard.api";
 
 export const useDashboard = () =>
   useQuery({
-    queryKey: ["dashboard", "overview"],
+    queryKey: ["dashboard-overview"],
     queryFn: getDashboardOverview,
   });

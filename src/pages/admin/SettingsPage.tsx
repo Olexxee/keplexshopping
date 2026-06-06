@@ -1,14 +1,28 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { CheckCircle } from "lucide-react";
+
 import {
   getOrganisation,
   updateOrganisation,
 } from "../../api/organisation.api";
+
 import { PageHeader } from "../../components/ui/PageHeader";
+import { Card } from "../../components/ui/Card";
+import { Button } from "../../components/ui/Button";
+
 import { getErrorMessage } from "../../utils/error";
+
+const FIELDS = [
+  { key: "name", label: "Organisation name", type: "text" },
+  { key: "email", label: "Email address", type: "email" },
+  { key: "phone", label: "Phone number", type: "tel" },
+  { key: "address", label: "Address", type: "text" },
+] as const;
 
 export const SettingsPage = () => {
   const qc = useQueryClient();
+
   const { data: org, isLoading } = useQuery({
     queryKey: ["organisation"],
     queryFn: getOrganisation,
@@ -49,49 +63,62 @@ export const SettingsPage = () => {
   };
 
   return (
-    <div className="space-y-5">
-      <PageHeader label="Admin" title="Organisation settings" />
+    <div className="space-y-6">
+      <PageHeader
+        label="Admin"
+        title="Organisation settings"
+        description="Manage your store's public-facing information."
+      />
 
       {isLoading ? (
-        <p className="text-sm text-gray-400">Loading settings...</p>
+        <Card className="max-w-xl animate-pulse space-y-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="space-y-1.5">
+              <div className="h-3 w-28 bg-gray-100 rounded" />
+              <div className="h-10 w-full bg-gray-100 rounded-xl" />
+            </div>
+          ))}
+          <div className="h-10 w-32 bg-gray-100 rounded-xl" />
+        </Card>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 max-w-xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <Card className="max-w-xl">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">
                 {error}
               </div>
             )}
+
             {isSuccess && (
-              <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm rounded-xl px-4 py-3">
+              <div className="flex items-center gap-2.5 bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm rounded-xl px-4 py-3">
+                <CheckCircle size={15} className="shrink-0" />
                 Settings saved successfully.
               </div>
             )}
 
-            {(["name", "email", "phone", "address"] as const).map((field) => (
-              <div key={field} className="space-y-1">
-                <label className="text-sm font-medium text-gray-700 capitalize">
-                  {field}
+            {FIELDS.map(({ key, label, type }) => (
+              <div key={key} className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">
+                  {label}
                 </label>
                 <input
-                  value={form[field]}
+                  type={type}
+                  value={form[key]}
                   onChange={(e) =>
-                    setForm((p) => ({ ...p, [field]: e.target.value }))
+                    setForm((p) => ({ ...p, [key]: e.target.value }))
                   }
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition"
                 />
               </div>
             ))}
 
-            <button
-              type="submit"
-              disabled={isPending}
-              className="bg-black text-white rounded-xl px-6 py-2.5 text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition"
-            >
-              {isPending ? "Saving..." : "Save changes"}
-            </button>
+            <div className="pt-1">
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Saving..." : "Save changes"}
+              </Button>
+            </div>
           </form>
-        </div>
+        </Card>
       )}
     </div>
   );
