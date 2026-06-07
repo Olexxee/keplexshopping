@@ -2,6 +2,7 @@ import { api } from "../lib/api";
 
 export const getBusinessConfig = async () => {
   const res = await api.get("/business-config");
+  console.log(res.data.data);
   return res.data.data;
 };
 
