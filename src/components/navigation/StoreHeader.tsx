@@ -25,7 +25,7 @@ export const StoreHeader = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
       <div className="max-w-7xl mx-auto h-16 px-6 flex items-center justify-between">
         <Link to="/shop" className="text-xl font-bold text-gray-900">
           Keplex

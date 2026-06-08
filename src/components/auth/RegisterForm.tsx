@@ -36,7 +36,11 @@ export const RegisterForm = () => {
         <label className="text-sm font-medium text-gray-700">Full name</label>
         <input
           type="text"
+<<<<<<< HEAD
           name="fullName" // ← was "name", didn't match state key
+=======
+          name="fullName"
+>>>>>>> 80b981cc0fb033df972f4e37655ccb8ea5ad167e
           value={form.fullName}
           onChange={handleChange}
           required
