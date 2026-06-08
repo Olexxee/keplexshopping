@@ -21,7 +21,10 @@ import { ItemsAdminPage } from "./pages/admin/ItemsAdminPage";
 import { CategoriesPage } from "./pages/admin/CatalogPage";
 import { AdminOrderDetailPage } from "./pages/admin/OrdersAdminPage";
 import { SettingsPage } from "./pages/admin/SettingsPage";
-import { AuditPage } from "./pages/admin/AuditPage";    
+import { AuditPage } from "./pages/admin/AuditPage";  
+import AdminTrainingRegistrationsPage from "./pages/admin/AdminTrainingRegistrationsPage";
+import { TrainingProgramsPage } from "./pages/admin/TrainingProgramsPage";
+  
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/dashboard" replace /> },
@@ -64,6 +67,8 @@ export const router = createBrowserRouter([
               { path: "/admin/orders", element: <AdminOrderDetailPage /> },
               { path: "/admin/settings", element: <SettingsPage /> },
               { path: "/admin/audit", element: <AuditPage /> },
+              { path: "/admin/training-registrations", element: <AdminTrainingRegistrationsPage /> },
+              { path: "/admin/training-programs", element: <TrainingProgramsPage /> },
             ],
           },
         ],

@@ -11,6 +11,8 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  MessageSquare,
+  Book,
 } from "lucide-react";
 import { useLogout } from "../../hooks/useAuth";
 import { useMe } from "../../hooks/useAuth";
@@ -23,7 +25,10 @@ const NAV_ITEMS = [
   { to: "/admin/orders", icon: ShoppingBag, label: "Orders" },
   { to: "/admin/settings", icon: Building2, label: "Settings" },
   { to: "/admin/audit", icon: ClipboardList, label: "Audit Logs" },
-  {to: "/admin/business-config", icon: Building2, label: "Business Config"},
+  { to: "/admin/testimonials", icon: MessageSquare, label: "Testimonials" },
+  { to: "/admin/business-config", icon: Building2, label: "Business Config" },
+  { to: "/admin/training-programs", icon: Book, label: "Training Programs" },
+  { to: "/admin/training-registrations", icon: ClipboardList, label: "Training Registrations" },
 ];
 
 export const AdminLayout = () => {

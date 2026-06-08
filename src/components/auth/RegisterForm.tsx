@@ -4,7 +4,12 @@ import { getErrorMessage } from "../../utils/error";
 
 export const RegisterForm = () => {
   const { mutate: register, isPending } = useRegister();
-  const [form, setForm] = useState({ fullName: "", email: "", password: "", phone: "" });
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    phone: "",
+  });
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,7 +36,7 @@ export const RegisterForm = () => {
         <label className="text-sm font-medium text-gray-700">Full name</label>
         <input
           type="text"
-          name="name"
+          name="fullName" // ← was "name", didn't match state key
           value={form.fullName}
           onChange={handleChange}
           required
@@ -49,6 +54,20 @@ export const RegisterForm = () => {
           onChange={handleChange}
           required
           placeholder="you@example.com"
+          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-gray-400 transition"
+        />
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-gray-700">
+          Phone (optional)
+        </label>
+        <input
+          type="tel"
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+          placeholder="+234 800 000 0000"
           className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-gray-400 transition"
         />
       </div>

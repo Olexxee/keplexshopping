@@ -5,6 +5,7 @@ export const getTrainings = () => {
   return api.get("/training-programs");
 };
 
+
 // GET TRAINING BY ID
 export const getTrainingById = (id: any) => {
   return api.get(`/training-programs/${id}`);
@@ -20,7 +21,20 @@ export const updateTraining = (id: any, data: any) => {
   return api.patch(`/training-programs/${id}`, data);
 };
 
-// DELETE TRAINING (ADMIN)
-export const deleteTraining = (id: any) => {
+export const deleteTraining = (id: string) => {
   return api.delete(`/training-programs/${id}`);
+};
+
+export const toggleTrainingStatus = (id: string, active: boolean) => {
+  return api.patch(`/training-programs/${id}`, { active });
+};
+
+export const toggleFeaturedTraining = (id: string, featured: boolean) => {
+  return api.patch(`/training-programs/${id}`, { featured });
+};
+
+export const uploadTrainingMedia = (id: string, data: FormData) => {
+  return api.post(`/training-programs/${id}/media`, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 };
