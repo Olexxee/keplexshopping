@@ -1,38 +1,90 @@
-/* Add to your global CSS for consistent scrolling and focus states */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
   * {
     @apply border-gray-200;
   }
 
-  body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+  html {
+    scroll-behavior: smooth;
   }
 
-  /* Custom scrollbar */
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  img {
+    @apply max-w-full block;
+  }
+
+  button {
+    @apply transition-all duration-200;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  /* Custom Scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100 rounded-full;
+    @apply bg-slate-100;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-400 rounded-full hover:bg-gray-500;
+    @apply bg-slate-400 rounded-full;
   }
 
-  /* Focus styles */
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-500;
+  }
+
+  /* Focus States */
   button:focus-visible,
   a:focus-visible,
   input:focus-visible,
-  textarea:focus-visible {
-    @apply outline-none ring-2 ring-gray-400 ring-offset-2;
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-none ring-2 ring-blue-500 ring-offset-2;
   }
 }
 
 @layer components {
-  /* Smooth transitions */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .product-card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 font-medium px-6 py-3 rounded-lg transition-all duration-200;
+  }
+
+  .input-field {
+    @apply w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-gray-900;
+  }
+
   .transition-smooth {
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
