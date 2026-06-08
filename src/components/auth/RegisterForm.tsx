@@ -31,7 +31,7 @@ export const RegisterForm = () => {
         <label className="text-sm font-medium text-gray-700">Full name</label>
         <input
           type="text"
-          name="name"
+          name="fullName"
           value={form.fullName}
           onChange={handleChange}
           required
