@@ -25,9 +25,12 @@ export const StoreHeader = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-pink-100 shadow-sm">
       <div className="max-w-7xl mx-auto h-16 px-6 flex items-center justify-between">
-        <Link to="/shop" className="text-xl font-bold text-gray-900">
+        <Link
+  to="/shop"
+  className="text-2xl font-extrabold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent"
+>
           Keplex
         </Link>
 
