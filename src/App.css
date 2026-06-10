@@ -1,52 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
+/* Add to your global CSS for consistent scrolling and focus states */
 @layer base {
   * {
-    @apply border-border;
-  }
-
-  html {
-    @apply scroll-smooth;
+    @apply border-gray-200;
   }
 
   body {
-    @apply bg-background text-primary antialiased font-sans;
-  }
-
-  h1 {
-    @apply text-4xl font-bold tracking-tight text-primary;
-  }
-
-  h2 {
-    @apply text-3xl font-bold text-primary;
-  }
-
-  h3 {
-    @apply text-2xl font-bold text-primary;
-  }
-
-  h4 {
-    @apply text-xl font-semibold text-primary;
-  }
-
-  h5 {
-    @apply text-lg font-semibold text-primary;
-  }
-
-  h6 {
-    @apply text-base font-semibold text-primary;
-  }
-
-  p {
-    @apply text-base text-muted leading-relaxed;
-  }
-
-  a {
-    @apply text-brand-600 font-medium hover:text-brand-700 transition-colors duration-200;
-  }
-
-  button {
-    @apply transition-all duration-200;
+    @apply bg-gray-50 text-gray-900 antialiased;
   }
 
   /* Custom scrollbar */
@@ -56,29 +16,27 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100;
+    @apply bg-gray-100 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-400 rounded hover:bg-gray-500;
+    @apply bg-gray-400 rounded-full hover:bg-gray-500;
   }
 
   /* Focus styles */
   button:focus-visible,
   a:focus-visible,
   input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible {
-    @apply outline-none ring-2 ring-brand-600 ring-offset-2;
+  textarea:focus-visible {
+    @apply outline-none ring-2 ring-gray-400 ring-offset-2;
   }
 }
 
 @layer components {
+  /* Smooth transitions */
   .transition-smooth {
-    @apply transition-all duration-200;
-  }
-
-  .input-focus {
-    @apply focus:ring-2 focus:ring-brand-500 focus:ring-offset-0 focus:border-brand-600;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
   }
 }

@@ -23,9 +23,9 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "bg-surface border border-border rounded-lg shadow-sm",
+        "bg-white border border-gray-200 rounded-2xl shadow-sm",
         paddingStyles[padding],
-        hoverable && "transition-all duration-300 hover:shadow-lg hover:border-brand-200",
+        hoverable && "transition-all duration-200 hover:shadow-md hover:border-gray-300",
         className,
       )}
     >
