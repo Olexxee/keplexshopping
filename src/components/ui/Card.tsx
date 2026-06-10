@@ -14,18 +14,18 @@ const paddingStyles = {
   lg: "p-8",
 };
 
-export const Card = ({ 
-  children, 
-  className, 
+export const Card = ({
+  children,
+  className,
   hoverable = false,
   padding = "md",
 }: CardProps) => {
   return (
     <div
       className={cn(
-        "bg-white border border-gray-200 rounded-2xl shadow-sm",
+        "bg-white border border-gray-100 rounded-2xl shadow-sm",
         paddingStyles[padding],
-        hoverable && "transition-all duration-200 hover:shadow-md hover:border-gray-300",
+        hoverable && "transition-all duration-300 hover:shadow-lg hover:border-brand-200 hover:-translate-y-1",
         className,
       )}
     >

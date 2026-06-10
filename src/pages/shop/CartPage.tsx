@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Trash2, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Trash2, Minus, Plus, ShoppingCart, ArrowRight } from "lucide-react";
 
 import {
   useCart,
@@ -15,27 +15,27 @@ import { PageHeader } from "../../components/ui/PageHeader";
 import { getErrorMessage } from "../../utils/error";
 
 const CartSkeleton = () => (
-  <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+  <div className="grid lg:grid-cols-[1fr_400px] gap-8">
     <div className="space-y-4">
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-4 animate-pulse"
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex gap-5 animate-pulse"
         >
-          <div className="w-28 h-28 rounded-xl bg-gray-100 shrink-0" />
+          <div className="w-32 h-32 rounded-xl bg-gray-200 shrink-0" />
           <div className="flex-1 space-y-3 py-1">
-            <div className="h-4 w-40 bg-gray-100 rounded" />
-            <div className="h-3 w-24 bg-gray-100 rounded" />
-            <div className="h-8 w-32 bg-gray-100 rounded-full mt-4" />
+            <div className="h-4 w-40 bg-gray-200 rounded-lg" />
+            <div className="h-3 w-24 bg-gray-200 rounded-lg" />
+            <div className="h-8 w-32 bg-gray-200 rounded-full mt-4" />
           </div>
         </div>
       ))}
     </div>
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 h-fit animate-pulse space-y-4">
-      <div className="h-5 w-32 bg-gray-100 rounded" />
-      <div className="h-4 w-full bg-gray-100 rounded" />
-      <div className="h-4 w-full bg-gray-100 rounded" />
-      <div className="h-10 w-full bg-gray-100 rounded-xl mt-4" />
+    <div className="bg-gradient-to-b from-white to-gray-50 rounded-2xl border border-gray-100 shadow-sm p-6 h-fit animate-pulse space-y-4">
+      <div className="h-5 w-32 bg-gray-200 rounded-lg" />
+      <div className="h-4 w-full bg-gray-200 rounded-lg" />
+      <div className="h-4 w-full bg-gray-200 rounded-lg" />
+      <div className="h-10 w-full bg-gray-200 rounded-xl mt-6" />
     </div>
   </div>
 );
@@ -67,22 +67,22 @@ export const CartPage = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <PageHeader label="Shopping" title="Your Cart" />
+      <div className="space-y-8 py-8">
+        <PageHeader label="Shopping Bag" title="Your Cart" />
         <CartSkeleton />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 py-8">
       <PageHeader
-        label="Shopping"
+        label="Shopping Bag"
         title="Your Cart"
         action={
           items.length > 0 ? (
             <Button
-              variant="secondary"
+              variant="outline"
               size="sm"
               onClick={() =>
                 clearCart(undefined, {
@@ -98,32 +98,35 @@ export const CartPage = () => {
       />
 
       {error && (
-        <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">
+        <div className="bg-red-50 border-2 border-red-200 text-red-700 text-sm rounded-2xl px-6 py-4 font-semibold">
           {getErrorMessage(error)}
         </div>
       )}
 
       {items.length === 0 ? (
-        <Card className="py-14 text-center">
-          <div className="mx-auto max-w-xs">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-50">
-              <ShoppingCart className="h-6 w-6 text-gray-300" />
+        <Card className="py-16 text-center bg-gradient-to-b from-gray-50 to-white">
+          <div className="mx-auto max-w-sm">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-brand-100">
+              <ShoppingCart className="h-10 w-10 text-brand-600" />
             </div>
-            <h2 className="text-base font-semibold text-gray-900">
+            <h2 className="text-2xl font-bold text-primary">
               Your cart is empty
             </h2>
-            <p className="mt-1 text-sm text-gray-400">
-              Browse the catalog and add something.
+            <p className="mt-3 text-base text-gray-600">
+              Start shopping and add items to your cart!
             </p>
-            <div className="mt-6">
+            <div className="mt-8">
               <Link to="/shop">
-                <Button size="sm">Go to catalog</Button>
+                <Button size="lg" fullWidth>
+                  <ShoppingCart size={18} className="mr-2" />
+                  Continue Shopping
+                </Button>
               </Link>
             </div>
           </div>
         </Card>
       ) : (
-        <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+        <div className="grid lg:grid-cols-[1fr_400px] gap-8">
           {/* Items */}
           <div className="space-y-4">
             {items.map((cartItem) => {
@@ -136,9 +139,9 @@ export const CartPage = () => {
               return (
                 <article
                   key={cartItem.id}
-                  className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex gap-4"
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-shadow duration-300 p-5 flex gap-5"
                 >
-                  <div className="w-28 h-28 rounded-xl bg-gray-100 overflow-hidden shrink-0">
+                  <div className="w-32 h-32 rounded-xl bg-gray-100 overflow-hidden shrink-0 ring-2 ring-gray-100">
                     {image ? (
                       <img
                         src={image}
@@ -146,21 +149,23 @@ export const CartPage = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="h-full flex items-center justify-center text-xs text-gray-300">
+                      <div className="h-full flex items-center justify-center text-xs text-gray-300 bg-gray-50">
                         No image
                       </div>
                     )}
                   </div>
 
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div className="flex justify-between gap-4">
                       <div className="min-w-0">
-                        <h2 className="font-semibold text-base text-gray-900 truncate">
-                          {cartItem.item?.name}
-                        </h2>
-                        <p className="text-sm text-gray-400 mt-0.5">
+                        <Link to={`/shop/${cartItem.itemId}`}>
+                          <h2 className="font-bold text-base text-primary hover:text-brand-600 transition-colors truncate">
+                            {cartItem.item?.name}
+                          </h2>
+                        </Link>
+                        <p className="text-sm text-brand-600 font-semibold mt-1">
                           ₦{Number(cartItem.unitPriceSnapshot).toLocaleString()}{" "}
-                          each
+                          <span className="text-gray-400">each</span>
                         </p>
                       </div>
 
@@ -171,15 +176,15 @@ export const CartPage = () => {
                           })
                         }
                         disabled={isRemovingThis || actionLoading}
-                        className="text-gray-300 hover:text-red-400 disabled:opacity-50 transition shrink-0"
+                        className="text-gray-300 hover:text-red-500 disabled:opacity-50 transition-colors shrink-0 hover:bg-red-50 p-2 rounded-lg"
                         aria-label="Remove item"
                       >
-                        <Trash2 size={17} />
+                        <Trash2 size={18} />
                       </button>
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">
-                      <div className="flex items-center border border-gray-200 rounded-full">
+                      <div className="flex items-center border-2 border-gray-200 rounded-full bg-white">
                         <button
                           onClick={() =>
                             handleQuantityChange(
@@ -188,11 +193,11 @@ export const CartPage = () => {
                             )
                           }
                           disabled={isUpdatingThis || actionLoading}
-                          className="p-2 disabled:opacity-50 hover:bg-gray-50 rounded-full transition"
+                          className="p-2 disabled:opacity-50 hover:text-brand-600 transition-colors"
                         >
-                          <Minus size={14} />
+                          <Minus size={16} />
                         </button>
-                        <span className="px-4 font-medium text-sm min-w-[2rem] text-center">
+                        <span className="px-4 font-bold text-base min-w-[2.5rem] text-center">
                           {isUpdatingThis ? "…" : cartItem.quantity}
                         </span>
                         <button
@@ -203,13 +208,13 @@ export const CartPage = () => {
                             )
                           }
                           disabled={isUpdatingThis || actionLoading}
-                          className="p-2 disabled:opacity-50 hover:bg-gray-50 rounded-full transition"
+                          className="p-2 disabled:opacity-50 hover:text-brand-600 transition-colors"
                         >
-                          <Plus size={14} />
+                          <Plus size={16} />
                         </button>
                       </div>
 
-                      <p className="font-bold text-gray-900">
+                      <p className="font-bold text-lg text-primary">
                         ₦{Number(cartItem.lineTotal).toLocaleString()}
                       </p>
                     </div>
@@ -220,40 +225,52 @@ export const CartPage = () => {
           </div>
 
           {/* Summary */}
-          <aside className="space-y-4">
-            <Card className="h-fit">
-              <h2 className="text-base font-semibold text-gray-900 mb-4">
+          <aside className="space-y-5">
+            <Card className="h-fit bg-gradient-to-b from-white to-gray-50">
+              <h2 className="text-lg font-bold text-primary mb-5">
                 Order Summary
               </h2>
 
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between text-gray-500">
-                  <span>Items</span>
-                  <span>{cart?.totalItems ?? 0}</span>
+              <div className="space-y-3.5 text-sm border-b border-gray-200 pb-5">
+                <div className="flex justify-between text-gray-600">
+                  <span className="font-medium">Items ({cart?.totalItems ?? 0})</span>
+                  <span className="font-semibold text-primary">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-gray-500">
-                  <span>Subtotal</span>
-                  <span>₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
+                <div className="flex justify-between text-gray-600">
+                  <span className="font-medium">Shipping</span>
+                  <span className="font-semibold text-green-600">FREE</span>
                 </div>
               </div>
 
-              <div className="border-t border-gray-100 mt-4 pt-4 flex justify-between font-bold text-base text-gray-900">
-                <span>Total</span>
-                <span>₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
+              <div className="pt-5 flex justify-between font-bold text-lg">
+                <span className="text-primary">Total</span>
+                <span className="text-brand-600">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
               </div>
 
-              <div className="mt-5">
+              <div className="mt-6">
                 <Link to="/checkout">
-                  <Button size="lg" fullWidth>
-                    Proceed to checkout
+                  <Button size="lg" fullWidth className="gap-2">
+                    Proceed to Checkout
+                    <ArrowRight size={18} />
                   </Button>
                 </Link>
               </div>
             </Card>
 
-            <p className="text-center text-xs text-gray-400">
-              🔒 Secure checkout powered by Paystack
-            </p>
+            {/* Trust badges */}
+            <div className="bg-brand-50 rounded-2xl border border-brand-200 p-4 text-center">
+              <p className="text-xs font-semibold text-brand-700 uppercase tracking-wide">
+                🔒 Secure Checkout
+              </p>
+              <p className="text-xs text-brand-600 mt-1">Powered by Paystack</p>
+            </div>
+
+            {/* Continue shopping */}
+            <Link to="/shop" className="block">
+              <Button variant="secondary" size="lg" fullWidth>
+                Continue Shopping
+              </Button>
+            </Link>
           </aside>
         </div>
       )}
