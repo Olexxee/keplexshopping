@@ -226,7 +226,7 @@ export const CartPage = () => {
 
           {/* Summary */}
           <aside className="space-y-5">
-            <Card className="h-fit bg-gradient-to-b from-white to-gray-50">
+            <Card className="h-fit">
               <h2 className="text-lg font-bold text-primary mb-5">
                 Order Summary
               </h2>

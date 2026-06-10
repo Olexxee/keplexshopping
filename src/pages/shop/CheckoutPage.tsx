@@ -134,7 +134,7 @@ export const CheckoutPage = () => {
         {/* Left Column */}
         <div className="space-y-6">
           {/* Delivery Address */}
-          <Card className="bg-gradient-to-br from-white to-gray-50">
+          <Card>
             <div className="flex items-center gap-3 mb-6">
               <MapPin size={24} className="text-brand-600" />
               <h2 className="text-xl font-bold text-primary">
@@ -143,9 +143,9 @@ export const CheckoutPage = () => {
             </div>
 
             {addresses.length === 0 ? (
-              <div className="rounded-2xl border-2 border-dashed border-brand-200 bg-brand-50 p-8 text-center">
-                <MapPin size={40} className="mx-auto text-brand-300 mb-3" />
-                <p className="mb-4 text-base text-brand-700 font-semibold">
+              <div className="rounded-lg border border-border bg-background p-8 text-center">
+                <MapPin size={40} className="mx-auto text-muted mb-3" />
+                <p className="mb-4 text-base text-muted font-semibold">
                   No saved addresses found
                 </p>
 
@@ -165,11 +165,11 @@ export const CheckoutPage = () => {
                     <label
                       key={address.id}
                       className={`
-                        block cursor-pointer rounded-2xl border-2 p-5 transition-all duration-300 transform
+                        block cursor-pointer rounded-lg border p-5 transition-all duration-300
                         ${
                           selected
-                            ? "border-brand-600 bg-brand-50 ring-2 ring-brand-300 shadow-lg"
-                            : "border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 hover:shadow-md"
+                            ? "border-brand-600 bg-primary/5 ring-2 ring-brand-600 shadow-md"
+                            : "border-border hover:border-brand-600 hover:bg-background"
                         }
                       `}
                     >
@@ -237,7 +237,7 @@ export const CheckoutPage = () => {
           </Card>
 
           {/* Delivery Instructions */}
-          <Card className="bg-gradient-to-br from-white to-gray-50">
+          <Card>
             <h2 className="mb-5 text-xl font-bold text-primary">
               Delivery Instructions (Optional)
             </h2>
@@ -270,7 +270,7 @@ export const CheckoutPage = () => {
 
         {/* Right Column - Order Summary */}
         <aside className="space-y-5">
-          <Card className="h-fit bg-gradient-to-b from-white to-gray-50">
+          <Card className="h-fit">
             <h2 className="mb-5 text-xl font-bold text-primary flex items-center gap-2">
               <CheckCircle size={20} className="text-brand-600" />
               Order Summary
@@ -325,8 +325,8 @@ export const CheckoutPage = () => {
             </div>
 
             {selectedAddress && (
-              <div className="mt-6 rounded-xl bg-brand-50 border border-brand-200 p-4">
-                <p className="mb-2 font-bold text-primary text-sm uppercase tracking-wide">Delivering To</p>
+              <div className="mt-6 rounded-lg bg-background border border-border p-4">
+                <p className="mb-2 font-bold text-primary text-xs uppercase tracking-wide">Delivering To</p>
 
                 <p className="font-semibold text-primary text-base">{selectedAddress.fullName}</p>
 
@@ -355,11 +355,11 @@ export const CheckoutPage = () => {
                 : "Pay Now"}
           </Button>
 
-          <div className="bg-brand-50 rounded-2xl border border-brand-200 p-4 text-center">
-            <p className="text-sm font-bold text-brand-700 uppercase tracking-wide">
+          <div className="bg-background rounded-lg border border-border p-4 text-center">
+            <p className="text-sm font-bold text-primary uppercase tracking-wide">
               🔒 Secure Payment
             </p>
-            <p className="text-xs text-brand-600 mt-1">Powered by Paystack</p>
+            <p className="text-xs text-muted mt-1">Powered by Paystack</p>
           </div>
         </aside>
       </div>

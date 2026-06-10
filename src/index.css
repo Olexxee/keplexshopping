@@ -1,14 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 :root {
-  --brand-primary: #ffd1dc;
-  --brand-dark: #ff3366;
-  --primary: #1a1a2e;
-  --bg: #fafafa;
+ --brand-primary: #ff4d8d;
+  --brand-dark: #e11d48;
+
+  --bg: #fff5f8;
   --surface: #ffffff;
-  --text: #1a1a2e;
+
+  --text: #1f2937;
   --text-muted: #6b7280;
-  --border: #e5e7eb;
+
+  --border: #f3d4df;
+
+  --success: #10b981;
+  --warning: #f59e0b;
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --sans: "Poppins", "Inter", system-ui, sans-serif;
