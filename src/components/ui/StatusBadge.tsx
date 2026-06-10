@@ -1,15 +1,15 @@
 const statusStyles: Record<string, string> = {
-  pending: "bg-amber-50 text-amber-700 border-amber-200",
-  confirmed: "bg-blue-50 text-blue-700 border-blue-200",
-  processing: "bg-purple-50 text-purple-700 border-purple-200",
-  shipped: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  delivered: "bg-green-50 text-green-700 border-green-200",
-  completed: "bg-green-50 text-green-700 border-green-200",
-  cancelled: "bg-red-50 text-red-700 border-red-200",
-  expired: "bg-gray-50 text-gray-600 border-gray-200",
-  success: "bg-green-50 text-green-700 border-green-200",
-  failed: "bg-red-50 text-red-700 border-red-200",
-  reversed: "bg-orange-50 text-orange-700 border-orange-200",
+  pending: "bg-yellow-100 text-yellow-800 border-2 border-yellow-300 font-semibold",
+  confirmed: "bg-blue-100 text-blue-800 border-2 border-blue-300 font-semibold",
+  processing: "bg-purple-100 text-purple-800 border-2 border-purple-300 font-semibold",
+  shipped: "bg-indigo-100 text-indigo-800 border-2 border-indigo-300 font-semibold",
+  delivered: "bg-green-100 text-green-800 border-2 border-green-300 font-semibold",
+  completed: "bg-emerald-100 text-emerald-800 border-2 border-emerald-300 font-semibold",
+  cancelled: "bg-red-100 text-red-800 border-2 border-red-300 font-semibold",
+  expired: "bg-gray-200 text-gray-700 border-2 border-gray-400 font-semibold",
+  success: "bg-green-100 text-green-800 border-2 border-green-300 font-semibold",
+  failed: "bg-red-100 text-red-800 border-2 border-red-300 font-semibold",
+  reversed: "bg-orange-100 text-orange-800 border-2 border-orange-300 font-semibold",
 };
 
 interface StatusBadgeProps {

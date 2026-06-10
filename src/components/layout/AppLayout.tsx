@@ -3,7 +3,7 @@ import { StoreHeader } from "../navigation/StoreHeader";
 
 export const AppLayout = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50">
       <StoreHeader />
 
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">

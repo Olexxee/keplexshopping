@@ -16,16 +16,16 @@ export const Button = ({
 }: ButtonProps) => {
   const variants = {
   primary:
-    "bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:shadow-lg hover:scale-[1.02] active:scale-100",
+    "bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 text-white hover:shadow-lg hover:scale-[1.02] active:scale-100 font-semibold",
 
   secondary:
-    "bg-pink-50 border border-pink-200 text-pink-600 hover:bg-pink-100",
+    "bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 text-cyan-600 hover:shadow-md hover:from-cyan-100 hover:to-blue-100",
 
   danger:
-    "bg-red-500 text-white hover:bg-red-600",
+    "bg-gradient-to-r from-red-500 to-rose-500 text-white hover:from-red-600 hover:to-rose-600 shadow-md",
 
   outline:
-    "border-2 border-pink-300 text-pink-600 hover:bg-pink-50",
+    "border-2 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-300 text-purple-600 hover:shadow-md hover:border-purple-400",
 };
 
   const sizes = {

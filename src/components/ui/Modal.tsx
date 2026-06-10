@@ -25,18 +25,18 @@ export const Modal = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className={`bg-white rounded-3xl shadow-xl w-full ${width} p-6`}
+        className={`bg-gradient-to-br from-white to-purple-50 rounded-3xl shadow-2xl w-full ${width} p-6 border-2 border-purple-200`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+          <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+            className="text-purple-400 hover:text-purple-600 text-2xl leading-none font-light"
           >
             ×
           </button>
