@@ -1,5 +1,6 @@
 import { api } from "../lib/api";
 import type { LoginPayload, RegisterPayload, User } from "../types/auth.types";
+import type { UpdateProfilePayload, ChangePasswordPayload } from "../types/profile.types";
 
 export const login = async (payload: LoginPayload): Promise<User> => {
   const res = await api.post("/auth/login", payload);
@@ -15,10 +16,9 @@ export const refreshSession = async (): Promise<void> => {
   await api.post("/auth/refresh");
 };
 
-export const updateProfile = async (payload: {
-  fullName: string;
-  phone?: string;
-}) => {
+export const updateMe = async (
+  payload: UpdateProfilePayload,
+): Promise<unknown> => {
   const res = await api.patch(
     "/auth/me",
     payload,
@@ -28,10 +28,7 @@ export const updateProfile = async (payload: {
 };
 
 export const changePassword = async (
-  payload: {
-    currentPassword: string;
-    newPassword: string;
-  },
+  payload: ChangePasswordPayload
 ) => {
   const res = await api.patch(
     "/auth/change-password",
