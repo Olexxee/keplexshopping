@@ -1,4 +1,3 @@
-import { AccountTabs } from "../../components/account/AccountTabs";
 import { AccountHero } from "../../components/account/AccountHero";
 import { AccountStats } from "../../components/account/AccountStats";
 import { AccountMenuItem } from "../../components/account/AccountMenuItem";

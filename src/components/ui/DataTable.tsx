@@ -22,44 +22,44 @@ export const DataTable = <T,>({
 }: DataTableProps<T>) => {
   if (isLoading) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
-        <p className="text-sm text-gray-400">Loading...</p>
+      <div className="bg-gradient-to-br from-white to-purple-50 rounded-2xl border-2 border-purple-200 shadow-md p-10 text-center">
+        <p className="text-sm text-purple-600 font-medium animate-pulse">Loading...</p>
       </div>
     );
   }
 
   if (!data.length) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
-        <p className="text-sm text-gray-400">{emptyMessage}</p>
+      <div className="bg-gradient-to-br from-white to-purple-50 rounded-2xl border-2 border-purple-200 shadow-md p-10 text-center">
+        <p className="text-sm text-purple-600 font-medium">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-gradient-to-br from-white to-purple-50 rounded-2xl border-2 border-purple-200 shadow-md overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
+            <tr className="border-b-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wide ${col.width ?? ""}`}
+                  className={`text-left px-5 py-3.5 text-xs font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent uppercase tracking-widest ${col.width ?? ""}`}
                 >
                   {col.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y divide-purple-100">
             {data.map((row) => (
               <tr
                 key={keyExtractor(row)}
-                className="hover:bg-gray-50 transition"
+                className="hover:bg-gradient-to-r hover:from-purple-100 hover:to-pink-100 transition-colors"
               >
                 {columns.map((col) => (
-                  <td key={col.key} className="px-5 py-4 text-gray-700">
+                  <td key={col.key} className="px-5 py-4 text-purple-700 font-medium">
                     {col.render(row)}
                   </td>
                 ))}

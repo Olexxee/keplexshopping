@@ -15,21 +15,24 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const variants = {
-    primary:
-      "bg-gray-900 text-white hover:bg-gray-800 active:bg-gray-950 shadow-sm",
-    secondary:
-      "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 active:bg-gray-100",
-    danger:
-      "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-sm",
-    outline:
-      "border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50",
-  };
+  primary:
+    "bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 text-white hover:shadow-lg hover:scale-[1.02] active:scale-100 font-semibold",
+
+  secondary:
+    "bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 text-cyan-600 hover:shadow-md hover:from-cyan-100 hover:to-blue-100",
+
+  danger:
+    "bg-gradient-to-r from-red-500 to-rose-500 text-white hover:from-red-600 hover:to-rose-600 shadow-md",
+
+  outline:
+    "border-2 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-300 text-purple-600 hover:shadow-md hover:border-purple-400",
+};
 
   const sizes = {
-    sm: "px-3 py-1.5 text-sm rounded-xl",
-    md: "px-4 py-2.5 text-sm rounded-xl",
-    lg: "px-6 py-3 text-base rounded-2xl",
-  };
+  sm: "px-4 py-2 rounded-xl",
+  md: "px-5 py-3 rounded-xl",
+  lg: "px-7 py-4 rounded-2xl",
+};
 
   return (
     <button

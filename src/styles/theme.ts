@@ -1,23 +1,25 @@
 export const theme = {
   colors: {
-    primary: "#0F172A", // slate-900
-    primaryLight: "#1E293B", // slate-800
-    accent: "#7C3AED", // violet-600
-    success: "#16A34A", // green-600
-    warning: "#F59E0B", // amber-500
-    danger: "#DC2626", // red-600
-    info: "#2563EB", // blue-600
+  primary: "#EC4899",
+  primaryLight: "#F9A8D4",
 
-    background: "#F8FAFC", // slate-50
-    surface: "#FFFFFF",
+  accent: "#FBBF24",
 
-    text: "#0F172A", // slate-900
-    textMuted: "#64748B", // slate-500
-    textLight: "#94A3B8", // slate-400
+  success: "#10B981",
+  warning: "#F59E0B",
+  danger: "#EF4444",
+  info: "#3B82F6",
 
-    border: "#E2E8F0", // slate-200
-    borderLight: "#F1F5F9", // slate-100
-  },
+  background: "#FFF8FB",
+  surface: "#FFFFFF",
+
+  text: "#1F2937",
+  textMuted: "#6B7280",
+  textLight: "#9CA3AF",
+
+  border: "#F3D4DF",
+  borderLight: "#FCE7F3",
+},
 
   spacing: {
     xs: "0.75rem", // 12px
