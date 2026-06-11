@@ -1,9 +1,21 @@
-export interface NotificationSettings {
-  orderUpdates: boolean;
+export interface Notification {
+  id: string;
 
-  promotions: boolean;
+  title: string;
+  message: string;
 
-  restockAlerts: boolean;
+  type: string;
 
-  newsletter: boolean;
+  isRead: boolean;
+
+  data?: Record<string, unknown>;
+
+  createdAt: string;
+}
+
+export interface NotificationPreferences {
+  orderEmails: boolean;
+  orderStatusEmails: boolean;
+  trainingEmails: boolean;
+  marketingEmails: boolean;
 }

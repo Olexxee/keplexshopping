@@ -20,7 +20,7 @@ import { ProfilePage } from "./pages/profile/ProfilePage";
 import { EditProfilePage } from "./pages/profile/EditProfilePage";
 import { ChangePasswordPage } from "./pages/profile/ChangePasswordPage";
 import { ItemsAdminPage } from "./pages/admin/ItemsAdminPage";
-import { PaymentMethodsPage } from "./pages/profile/PaymentMethodsPage";
+import { SupportPage } from "./pages/profile/SupportPage";
 import { NotificationsPage } from "./pages/profile/NotificationsPage";
 import { CategoriesPage } from "./pages/admin/CatalogPage";
 import { AdminOrderDetailPage } from "./pages/admin/OrdersAdminPage";
@@ -53,7 +53,7 @@ export const router = createBrowserRouter([
           { path: "/profile", element: <ProfilePage /> },
           { path: "/profile/edit", element: <EditProfilePage /> },
           { path: "/profile/password", element: <ChangePasswordPage /> },
-          { path: "/profile/payment-methods", element: <PaymentMethodsPage /> },
+          { path: "/support", element: <SupportPage/> },
           { path: "/profile/notifications", element: <NotificationsPage /> },
         ],
       },
