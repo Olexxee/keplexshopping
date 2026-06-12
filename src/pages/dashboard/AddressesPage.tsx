@@ -83,14 +83,14 @@ export const AddressesPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 py-8">
       <PageHeader
         label="Account"
         title="Saved Addresses"
         action={
           <button
             onClick={openCreate}
-            className="flex items-center gap-2 bg-black text-white rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-gray-800 transition"
+            className="flex items-center gap-2 bg-amber text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-amber-light transition-all duration-200 shadow-amber hover:shadow-glow"
           >
             <Plus size={15} />
             Add address
@@ -99,65 +99,65 @@ export const AddressesPage = () => {
       />
 
       {isLoading ? (
-        <p className="text-sm text-gray-400">Loading addresses...</p>
+        <p className="text-sm text-muted-foreground">Loading addresses...</p>
       ) : addresses.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-10 text-center">
-          <MapPin size={32} className="mx-auto text-gray-300 mb-3" />
-          <h2 className="text-base font-semibold text-gray-900">
+        <div className="bg-card rounded-xl border border-border shadow-md p-10 text-center">
+          <MapPin size={32} className="mx-auto text-muted-foreground mb-3" />
+          <h2 className="text-base font-semibold text-foreground">
             No addresses yet
           </h2>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Add a delivery address to speed up checkout.
           </p>
           <button
             onClick={openCreate}
-            className="inline-block mt-5 bg-black text-white rounded-xl px-6 py-2.5 text-sm font-medium hover:bg-gray-800 transition"
+            className="inline-block mt-5 bg-amber text-white rounded-lg px-6 py-2.5 text-sm font-medium hover:bg-amber-light transition-all duration-200 shadow-amber"
           >
             Add address
           </button>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {addresses.map((address) => (
             <div
               key={address.id}
-              className={`bg-white rounded-2xl border shadow-sm p-5 relative ${
-                address.isDefault ? "border-gray-900" : "border-gray-100"
+              className={`bg-card rounded-xl border shadow-md p-5 relative transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${
+                address.isDefault ? "border-amber" : "border-border"
               }`}
             >
               {address.isDefault && (
-                <span className="absolute top-4 right-4 text-xs font-medium bg-gray-900 text-white px-2.5 py-1 rounded-full">
+                <span className="absolute top-4 right-4 text-xs font-medium bg-amber text-white px-2.5 py-1 rounded-full">
                   Default
                 </span>
               )}
 
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
-                  <MapPin size={16} className="text-gray-500" />
+                <div className="w-9 h-9 rounded-lg bg-amber/10 flex items-center justify-center shrink-0">
+                  <MapPin size={16} className="text-amber" />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-semibold text-gray-900 text-sm">
+                  <p className="font-semibold text-foreground text-sm">
                     {address.label}
                   </p>
-                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                     {address.street}, {address.city}
                   </p>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-muted-foreground">
                     {address.state}, {address.country}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-50">
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border">
                 <button
                   onClick={() => openEdit(address)}
-                  className="flex-1 text-center py-2 rounded-xl border border-gray-200 text-xs font-medium hover:bg-gray-50 transition"
+                  className="flex-1 text-center py-2 rounded-lg border border-border text-foreground text-xs font-medium hover:bg-muted hover:text-amber transition-all duration-200"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => setDeleteTarget(address)}
-                  className="flex-1 text-center py-2 rounded-xl border border-red-100 text-red-500 text-xs font-medium hover:bg-red-50 transition"
+                  className="flex-1 text-center py-2 rounded-lg border border-destructive/20 text-destructive text-xs font-medium hover:bg-destructive/10 transition-all duration-200"
                 >
                   Delete
                 </button>
@@ -175,32 +175,32 @@ export const AddressesPage = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           {formError && (
-            <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg px-4 py-3">
               {formError}
             </div>
           )}
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Label</label>
+            <label className="text-sm font-medium text-foreground">Label</label>
             <input
               name="label"
               value={form.label}
               onChange={handleChange}
               required
               placeholder="e.g. Home, Office"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition"
+              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-1 focus:ring-amber transition-all"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Street</label>
+            <label className="text-sm font-medium text-foreground">Street</label>
             <input
               name="street"
               value={form.street}
               onChange={handleChange}
               required
               placeholder="12 Broad Street"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition"
+              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-1 focus:ring-amber transition-all"
             />
           </div>
 
@@ -210,7 +210,7 @@ export const AddressesPage = () => {
                 key={field}
                 className={`space-y-1 ${field === "country" ? "col-span-2" : ""}`}
               >
-                <label className="text-sm font-medium text-gray-700 capitalize">
+                <label className="text-sm font-medium text-foreground capitalize">
                   {field}
                 </label>
                 <input
@@ -218,7 +218,7 @@ export const AddressesPage = () => {
                   value={form[field]}
                   onChange={handleChange}
                   required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition"
+                  className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-1 focus:ring-amber transition-all"
                 />
               </div>
             ))}
@@ -231,11 +231,11 @@ export const AddressesPage = () => {
               name="isDefault"
               checked={form.isDefault}
               onChange={handleChange}
-              className="w-4 h-4 rounded"
+              className="w-4 h-4 rounded border-input text-amber focus:ring-amber focus:ring-offset-0"
             />
             <label
               htmlFor="isDefault"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-foreground"
             >
               Set as default address
             </label>
@@ -244,7 +244,7 @@ export const AddressesPage = () => {
           <button
             type="submit"
             disabled={creating || updating}
-            className="w-full bg-black text-white rounded-xl py-2.5 text-sm font-medium hover:bg-gray-800 disabled:opacity-50 transition"
+            className="w-full bg-amber text-white rounded-lg py-2.5 text-sm font-medium hover:bg-amber-light transition-all duration-200 disabled:opacity-50 shadow-amber"
           >
             {creating || updating
               ? "Saving..."

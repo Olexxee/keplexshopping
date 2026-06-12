@@ -1,146 +1,80 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Modern Luxury Light Theme - Apple/Everlane Inspired */
-    --background: 0 0% 99%;
-    --foreground: 0 0% 9%;
-
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 9%;
-
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 9%;
-
-    /* Warm Amber - Primary brand color */
-    --primary: 36 91% 43%;
-    --primary-foreground: 0 0% 100%;
-
-    /* Warm neutral - Secondary */
-    --secondary: 30 20% 96%;
-    --secondary-foreground: 0 0% 9%;
-
-    --muted: 30 10% 96%;
-    --muted-foreground: 0 0% 45%;
-
-    /* Amber accent */
-    --accent: 36 91% 43%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 30 10% 90%;
-    --input: 30 10% 90%;
-    --ring: 36 91% 43%;
-
-    --radius: 0.75rem;
-
-    /* Custom luxury tokens */
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    
+    /* Amber custom colors */
     --amber: 36 91% 43%;
     --amber-light: 36 91% 55%;
     --amber-dark: 36 91% 35%;
-    --warm-gray: 30 5% 35%;
-    --warm-gray-dark: 30 5% 20%;
-    --cream: 40 30% 98%;
-    --charcoal: 0 0% 12%;
-
-    /* Gradients */
-    --gradient-amber: linear-gradient(135deg, hsl(36 91% 43%), hsl(36 91% 55%));
-    --gradient-soft: linear-gradient(180deg, hsl(0 0% 99%), hsl(30 10% 97%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(30 15% 98%));
-
-    /* Shadows - Apple-style layered shadows */
-    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
-    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.12);
-    --shadow-amber: 0 8px 30px -5px hsl(36 91% 43% / 0.25);
-    --shadow-glow: 0 0 40px -10px hsl(36 91% 43% / 0.3);
-
-    /* Sidebar for admin */
-    --sidebar-background: 30 15% 98%;
-    --sidebar-foreground: 0 0% 9%;
-    --sidebar-primary: 36 91% 43%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 10% 94%;
-    --sidebar-accent-foreground: 0 0% 9%;
-    --sidebar-border: 30 10% 90%;
-    --sidebar-ring: 36 91% 43%;
+    
+    /* Shadows */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    --shadow-amber: 0 10px 25px -5px hsl(36 91% 43% / 0.3);
+    --shadow-glow: 0 0 20px hsl(36 91% 55% / 0.4);
+    
+    /* Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    /* Modern Luxury Dark Theme */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 95%;
-
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 95%;
-
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 95%;
-
-    /* Warm Amber - Primary brand color */
-    --primary: 36 91% 55%;
-    --primary-foreground: 0 0% 4%;
-
-    /* Warm neutral - Secondary */
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 95%;
-
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 55%;
-
-    /* Amber accent */
-    --accent: 36 91% 55%;
-    --accent-foreground: 0 0% 4%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
-    --ring: 36 91% 55%;
-
-    /* Custom luxury tokens */
-    --amber: 36 91% 55%;
-    --amber-light: 36 91% 65%;
-    --amber-dark: 36 91% 45%;
-    --warm-gray: 30 5% 55%;
-    --warm-gray-dark: 30 5% 35%;
-    --cream: 40 20% 92%;
-    --charcoal: 0 0% 10%;
-
-    /* Gradients */
-    --gradient-amber: linear-gradient(135deg, hsl(36 91% 55%), hsl(36 91% 65%));
-    --gradient-soft: linear-gradient(180deg, hsl(0 0% 4%), hsl(0 0% 7%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 9%), hsl(0 0% 6%));
-
-    /* Shadows */
-    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.15);
-    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.25), 0 2px 4px -2px rgb(0 0 0 / 0.2);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.25);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.35), 0 8px 10px -6px rgb(0 0 0 / 0.3);
-    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.5);
-    --shadow-amber: 0 8px 30px -5px hsl(36 91% 55% / 0.3);
-    --shadow-glow: 0 0 40px -10px hsl(36 91% 55% / 0.4);
-
-    /* Sidebar for admin */
-    --sidebar-background: 0 0% 6%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 36 91% 55%;
-    --sidebar-primary-foreground: 0 0% 4%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 14%;
-    --sidebar-ring: 36 91% 55%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    
+    --amber: 36 91% 50%;
+    --amber-light: 36 91% 60%;
+    --amber-dark: 36 91% 40%;
   }
 }
 
@@ -148,225 +82,26 @@
   * {
     @apply border-border;
   }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-feature-settings: 'kern' 1, 'liga' 1;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    @apply tracking-tight font-semibold;
-  }
-
-  /* Smooth theme transitions */
-  html.dark body,
-  html:not(.dark) body {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }
 
 @layer components {
-  /* Luxury gradient text */
-  .luxury-text {
-    background: var(--gradient-amber);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* Custom component classes for faster styling */
+  .container-custom {
+    @apply container mx-auto px-4 md:px-6 lg:px-8;
   }
-
-  /* Card styles */
-  .card-luxury {
-    background: var(--gradient-card);
-    border: 1px solid hsl(var(--border));
-    box-shadow: var(--shadow-sm);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  .heading-display {
+    @apply font-display text-display-md md:text-display-lg lg:text-display-xl tracking-tight;
   }
-
-  .card-luxury:hover {
-    box-shadow: var(--shadow-lg);
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
-
-  /* Hover lift effect - Apple-style */
-  .hover-lift {
-    @apply transition-all duration-500 ease-out;
+  
+  .gradient-amber-text {
+    @apply bg-gradient-to-r from-amber to-amber-light bg-clip-text text-transparent;
   }
-
-  .hover-lift:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-xl);
-  }
-
-  /* Gold underline animation */
-  .gold-underline {
-    position: relative;
-    display: inline-block;
-  }
-
-  .gold-underline::after {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 0;
-    height: 1.5px;
-    background: var(--gradient-amber);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .gold-underline:hover::after {
-    width: 100%;
-  }
-
-  /* Glass morphism */
-  .glass {
-    background: hsl(var(--background) / 0.8);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-  }
-
-  /* Glow effect */
-  .glow-amber {
-    box-shadow: var(--shadow-amber);
-  }
-
-  /* Shimmer loading effect */
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      hsl(var(--muted)) 0%,
-      hsl(var(--muted-foreground) / 0.1) 50%,
-      hsl(var(--muted)) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite linear;
-  }
-
-  /* Focus ring */
-  .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
-  }
-
-  /* Smooth button press */
-  .btn-press {
-    @apply active:scale-[0.98] transition-transform duration-150;
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  /* Animation utilities */
-  .animate-fade-in {
-    animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  .animate-fade-in-up {
-    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  .animate-scale-in {
-    animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  .animate-blur-in {
-    animation: blurIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  /* Stagger animation delays */
-  .stagger-1 { animation-delay: 0.1s; }
-  .stagger-2 { animation-delay: 0.2s; }
-  .stagger-3 { animation-delay: 0.3s; }
-  .stagger-4 { animation-delay: 0.4s; }
-  .stagger-5 { animation-delay: 0.5s; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  @keyframes blurIn {
-    from {
-      opacity: 0;
-      filter: blur(10px);
-    }
-    to {
-      opacity: 1;
-      filter: blur(0);
-    }
-  }
-
-  @keyframes shimmer {
-    from { background-position: 200% 0; }
-    to { background-position: -200% 0; }
-  }
-}
-
-/* Custom scrollbar - minimal style */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
-  border-radius: 100px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.3);
-}
-
-/* Selection color */
-::selection {
-  background: hsl(var(--primary) / 0.2);
-  color: hsl(var(--foreground));
 }

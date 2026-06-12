@@ -1,5 +1,4 @@
-import type { Config } from "tailwindcss";
-
+/** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
   content: [
@@ -96,6 +95,7 @@ export default {
         amber: "var(--shadow-amber)",
         glow: "var(--shadow-glow)",
       },
+      
       keyframes: {
         "accordion-down": {
           from: { height: "0", opacity: "0" },
@@ -129,6 +129,15 @@ export default {
           from: { transform: "scale(0.95)", opacity: "0" },
           to: { transform: "scale(1)", opacity: "1" },
         },
+        "float-delayed": {
+    "0%, 100%": { transform: "translateY(0px)" },
+    "50%": { transform: "translateY(-12px)" },
+      },
+    },
+    animation: {
+      // ... your existing animations
+      "float-delayed": "float 4s ease-in-out infinite 2s",
+    
       },
       animation: {
         "accordion-down": "accordion-down 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -151,4 +160,5 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+}
+

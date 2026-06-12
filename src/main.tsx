@@ -7,7 +7,6 @@ import { AuthProvider } from "./providers/AuthProvider";
 import { queryClient } from "./lib/queryClient";
 import { router } from "./router";
 import "./index.css";
-import "./styles/global.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

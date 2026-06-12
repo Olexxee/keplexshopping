@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   ShoppingCart,
@@ -34,7 +33,7 @@ const FilterChip = ({
   label: string;
   onRemove: () => void;
 }) => (
-  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded text-xs font-semibold bg-primary text-white border border-secondary">
+  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber text-white shadow-amber">
     {label}
     <button
       onClick={onRemove}
@@ -51,16 +50,16 @@ const CatalogSkeleton = () => (
     {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
       <div
         key={i}
-        className="bg-surface rounded-lg border border-border shadow-sm overflow-hidden animate-pulse"
+        className="bg-card rounded-xl border border-border shadow-md overflow-hidden animate-pulse"
       >
-        <div className="h-56 bg-gray-200" />
+        <div className="h-56 bg-muted/50" />
         <div className="p-5 space-y-3">
-          <div className="h-3 w-16 bg-gray-200 rounded" />
-          <div className="h-4 w-full bg-gray-200 rounded" />
-          <div className="h-3 w-3/4 bg-gray-200 rounded" />
+          <div className="h-3 w-16 bg-muted/50 rounded" />
+          <div className="h-4 w-full bg-muted/50 rounded" />
+          <div className="h-3 w-3/4 bg-muted/50 rounded" />
           <div className="flex justify-between items-center mt-5">
-            <div className="h-5 w-20 bg-gray-200 rounded" />
-            <div className="h-10 w-10 bg-gray-200 rounded" />
+            <div className="h-5 w-20 bg-muted/50 rounded" />
+            <div className="h-10 w-10 bg-muted/50 rounded-lg" />
           </div>
         </div>
       </div>
@@ -129,12 +128,12 @@ export const CatalogPage = () => {
             key={value}
             onClick={() => setSelectedType(value)}
             className={`
-              flex items-center gap-2 px-4 py-2.5 rounded font-semibold text-sm
+              flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm
               border-2 transition-all duration-200
               ${
                 selectedType === value
-                  ? "bg-primary text-white border-primary"
-                  : "bg-surface text-primary border-border hover:border-brand-600"
+                  ? "bg-amber text-white border-amber shadow-amber"
+                  : "bg-card text-foreground border-border hover:border-amber/50 hover:text-amber"
               }
             `}
           >
@@ -150,20 +149,20 @@ export const CatalogPage = () => {
           <div className="relative flex-1">
             <Search
               size={20}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
             />
             <input
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search products and services..."
-              className="w-full border border-border rounded-lg pl-10 pr-4 py-2.5 text-base outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/10 transition-all duration-200 bg-surface"
+              className="w-full rounded-lg border border-input bg-background pl-10 pr-4 py-2.5 text-foreground placeholder:text-muted-foreground outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
             />
           </div>
 
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="border border-border rounded-lg px-4 py-2.5 text-base bg-surface outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/10 transition-all duration-200 cursor-pointer font-medium text-primary"
+            className="rounded-lg border border-input bg-background px-4 py-2.5 text-foreground outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200 cursor-pointer font-medium"
           >
             <option value="">All categories</option>
             {categories.map((cat) => (
@@ -182,8 +181,8 @@ export const CatalogPage = () => {
 
       {/* Active filters */}
       {hasActiveFilters && (
-        <div className="flex gap-3 flex-wrap items-center bg-primary/5 p-4 rounded-lg border border-primary/10">
-          <span className="text-xs font-bold text-primary uppercase tracking-wider">Active filters:</span>
+        <div className="flex gap-3 flex-wrap items-center bg-amber/5 p-4 rounded-lg border border-amber/10">
+          <span className="text-xs font-bold text-amber uppercase tracking-wider">Active filters:</span>
           {selectedCategory && (
             <FilterChip
               label={
@@ -210,7 +209,7 @@ export const CatalogPage = () => {
           )}
           <button
             onClick={clearFilters}
-            className="text-xs font-bold text-brand-600 hover:text-brand-700 transition-colors ml-auto"
+            className="text-xs font-bold text-amber hover:text-amber-light transition-colors ml-auto"
           >
             Clear all
           </button>
@@ -219,7 +218,7 @@ export const CatalogPage = () => {
 
       {/* Error */}
       {error && (
-        <div className="bg-danger/10 border border-danger text-danger text-sm rounded-lg px-6 py-4 font-semibold">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg px-6 py-4 font-medium">
           {getErrorMessage(error)}
         </div>
       )}
@@ -230,13 +229,13 @@ export const CatalogPage = () => {
       ) : items.length === 0 ? (
         <Card padding="lg" className="text-center">
           <div className="py-12">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-lg bg-border">
-              <Package className="h-10 w-10 text-muted" />
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-amber/10">
+              <Package className="h-10 w-10 text-amber" />
             </div>
-            <h2 className="text-2xl font-bold text-primary">
+            <h2 className="font-display text-display-sm text-foreground">
               No items found
             </h2>
-            <p className="mt-3 text-base text-muted">
+            <p className="mt-3 text-muted-foreground">
               Try adjusting your filters or search terms to find what you're looking for.
             </p>
             {hasActiveFilters && (
@@ -269,20 +268,20 @@ export const CatalogPage = () => {
                 {/* Product Image */}
                 <Link
                   to={`/shop/${item.id}`}
-                  className="block relative h-56 bg-gray-100 overflow-hidden group"
+                  className="block relative h-56 bg-muted/30 overflow-hidden group"
                 >
                   {image ? (
                     <img
                       src={image}
                       alt={item.name}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                   ) : (
-                    <div className="h-full flex items-center justify-center bg-background">
+                    <div className="h-full flex items-center justify-center bg-card">
                       {isService ? (
-                        <Wrench size={48} className="text-border" />
+                        <Wrench size={48} className="text-muted-foreground" />
                       ) : (
-                        <Package size={48} className="text-border" />
+                        <Package size={48} className="text-muted-foreground" />
                       )}
                     </div>
                   )}
@@ -290,11 +289,11 @@ export const CatalogPage = () => {
                   {/* Type Badge */}
                   <span
                     className={`
-                      absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold
+                      absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold shadow-md
                       ${
                         isService
-                          ? "bg-brand-600 text-white"
-                          : "bg-secondary text-white"
+                          ? "bg-amber text-white"
+                          : "bg-amber-dark text-white"
                       }
                     `}
                   >
@@ -306,29 +305,29 @@ export const CatalogPage = () => {
                 {/* Product Info */}
                 <div className="p-5 flex-1 flex flex-col">
                   {item.category && (
-                    <p className="text-xs font-bold text-brand-600 uppercase tracking-wider mb-2">
+                    <p className="text-xs font-bold text-amber uppercase tracking-wider mb-2">
                       {item.category.name}
                     </p>
                   )}
 
                   <Link to={`/shop/${item.id}`}>
-                    <h3 className="font-bold text-primary hover:text-brand-600 transition-colors line-clamp-2 text-base">
+                    <h3 className="font-display font-semibold text-foreground hover:text-amber transition-colors line-clamp-2 text-base">
                       {item.name}
                     </h3>
                   </Link>
 
-                  <p className="text-muted text-sm line-clamp-2 mt-2 leading-relaxed flex-1">
+                  <p className="text-muted-foreground text-sm line-clamp-2 mt-2 leading-relaxed flex-1">
                     {item.description}
                   </p>
 
                   {/* Footer with price and action */}
                   <div className="flex items-center justify-between mt-5 pt-4 border-t border-border">
                     <div>
-                      <p className="font-bold text-lg text-brand-600">
+                      <p className="font-display font-bold text-lg text-amber">
                         ₦{Number(item.price).toLocaleString()}
                       </p>
                       {isOutOfStock && (
-                        <p className="text-xs text-danger font-bold mt-1">
+                        <p className="text-xs text-destructive font-bold mt-1">
                           Out of stock
                         </p>
                       )}
@@ -336,7 +335,7 @@ export const CatalogPage = () => {
 
                     {isService ? (
                       <Link to={`/shop/${item.id}`}>
-                        <Button variant="primary" size="sm" className="gap-1.5">
+                        <Button variant="primary" size="sm" className="gap-1.5 shadow-amber hover:shadow-glow">
                           <CalendarCheck size={14} />
                           Book
                         </Button>
@@ -346,11 +345,11 @@ export const CatalogPage = () => {
                         onClick={() => handleAddToCart(item.id)}
                         disabled={isAddingThis || isOutOfStock}
                         className={`
-                          rounded p-2.5 transition-all duration-200 flex items-center justify-center
+                          rounded-lg p-2.5 transition-all duration-200 flex items-center justify-center
                           ${
                             isOutOfStock
-                              ? "bg-border text-muted cursor-not-allowed"
-                              : "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 hover:shadow-lg"
+                              ? "bg-muted text-muted-foreground cursor-not-allowed"
+                              : "bg-amber text-white hover:bg-amber-light hover:shadow-glow active:scale-95"
                           }
                         `}
                         aria-label="Add to cart"
