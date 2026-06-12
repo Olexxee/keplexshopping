@@ -9,9 +9,9 @@ interface CardProps {
 
 const paddingStyles = {
   none: "p-0",
-  sm: "p-4",
-  md: "p-6",
-  lg: "p-8",
+  sm: "p-3",
+  md: "p-5",
+  lg: "p-7",
 };
 
 export const Card = ({
@@ -23,10 +23,18 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "bg-gradient-to-br from-white to-purple-50 border border-purple-200 rounded-2xl shadow-md",
+        // base
+        "relative overflow-hidden rounded-2xl border border-gray-100 bg-white",
+
+        // softer modern shadow (better than purple tint)
+        "shadow-sm",
+
+        // smooth interaction
+        hoverable &&
+          "transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:border-purple-300",
+
         paddingStyles[padding],
-        hoverable && "transition-all duration-300 hover:shadow-lg hover:border-purple-400 hover:from-white hover:to-pink-50",
-        className,
+        className
       )}
     >
       {children}
