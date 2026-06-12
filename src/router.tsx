@@ -16,8 +16,12 @@ import { PaymentCallbackPage } from "./pages/payment/PaymentCallbackPage";
 import { AdminOverviewPage } from "./pages/admin/AdminOverviewPage";
 import { UsersPage } from "./pages/admin/UsersPage";
 import { AddressesPage } from "./pages/dashboard/AddressesPage";
-import { ProfilePage } from "./pages/dashboard/ProfilePage";
+import { ProfilePage } from "./pages/profile/ProfilePage";
+import { EditProfilePage } from "./pages/profile/EditProfilePage";
+import { ChangePasswordPage } from "./pages/profile/ChangePasswordPage";
 import { ItemsAdminPage } from "./pages/admin/ItemsAdminPage";
+import { SupportPage } from "./pages/profile/SupportPage";
+import { NotificationsPage } from "./pages/profile/NotificationsPage";
 import { CategoriesPage } from "./pages/admin/CatalogPage";
 import { AdminOrderDetailPage } from "./pages/admin/OrdersAdminPage";
 import { SettingsPage } from "./pages/admin/SettingsPage";
@@ -47,6 +51,10 @@ export const router = createBrowserRouter([
           { path: "/orders/:id", element: <OrderDetailPage /> },
           { path: "/addresses", element: <AddressesPage /> },
           { path: "/profile", element: <ProfilePage /> },
+          { path: "/profile/edit", element: <EditProfilePage /> },
+          { path: "/profile/password", element: <ChangePasswordPage /> },
+          { path: "/support", element: <SupportPage/> },
+          { path: "/profile/notifications", element: <NotificationsPage /> },
         ],
       },
 

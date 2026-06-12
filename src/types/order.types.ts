@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 export type OrderStatus =
   | "PENDING"
   | "CONFIRMED"
@@ -32,10 +30,10 @@ export interface OrderItem {
 export interface Order {
   shippingLabel: import("react/jsx-runtime").JSX.Element;
   address: any;
-  shippingStreet: ReactNode;
-  shippingCity: ReactNode;
-  shippingState: ReactNode;
-  shippingCountry: ReactNode;
+  shippingStreet: string;
+  shippingCity: string;
+  shippingState: string;
+  shippingCountry: string;
   id: string;
   status: OrderStatus;
   totalAmount: number | string;

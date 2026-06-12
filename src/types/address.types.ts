@@ -1,16 +1,19 @@
-import type { ReactNode } from "react";
-
 export interface Address {
-  fullName: ReactNode;
-  phone: ReactNode;
   id: string;
-  label: string; // e.g. "Home", "Office"
+
+  fullName: string;
+  phone: string;
+
+  label: string;
+
   street: string;
   city: string;
-  postalCode: string;
-  addressLine?: string; // Optional second line for apartment, suite, etc.
   state: string;
   country: string;
+  postalCode: string;
+
+  addressLine?: string;
+
   isDefault: boolean;
 }
 

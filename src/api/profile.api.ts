@@ -1,5 +1,6 @@
 import { api } from "../lib/api";
 import type { User } from "../types/auth.types";
+import type { UpdateProfilePayload } from "../types/profile.types";
 
 export const getMe = async (): Promise<User> => {
   const res = await api.get("/auth/me");
@@ -7,7 +8,7 @@ export const getMe = async (): Promise<User> => {
 };
 
 export const updateMe = async (
-  payload: Partial<Record<"name" | "email", string>>,
+  payload: UpdateProfilePayload,
 ): Promise<User> => {
   const res = await api.patch("/auth/me", payload);
   return res.data.data;
