@@ -24,12 +24,12 @@ export const ProfilePage = () => {
   const menuItems = [
     {
       title: "Order History",
-      subtitle: `${ordersCount} orders`,
+      subtitle: `${ordersCount} order${ordersCount !== 1 ? 's' : ''}`,
       to: "/orders",
     },
     {
       title: "Addresses",
-      subtitle: `${addressesCount} saved`,
+      subtitle: `${addressesCount} saved address${addressesCount !== 1 ? 's' : ''}`,
       to: "/addresses",
     },
     {
@@ -56,25 +56,40 @@ export const ProfilePage = () => {
 
   return (
     <AccountLayout>
+      <div className="space-y-8 py-8">
+        {/* Hero Section */}
+        <AccountHero user={user} />
 
-      <AccountHero user={user} />
+        {/* Stats Section */}
+        <AccountStats
+          ordersCount={ordersCount}
+          addressesCount={addressesCount}
+        />
 
-      <AccountStats
-        ordersCount={ordersCount}
-        addressesCount={addressesCount}
-      />
+        {/* Account Menu Section */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-display-sm text-foreground">
+              Account Settings
+            </h2>
+            <span className="text-xs text-muted-foreground">
+              {menuItems.length} items
+            </span>
+          </div>
 
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-gray-900">Account</h2>
+          <div className="bg-card rounded-xl border border-border shadow-md overflow-hidden">
+            {menuItems.map((item, index) => (
+              <AccountMenuItem 
+                key={item.title} 
+                {...item} 
+              />
+            ))}
+          </div>
+        </section>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          {menuItems.map((item) => (
-            <AccountMenuItem key={item.title} {...item} />
-          ))}
-        </div>
-      </section>
-
-      <DangerZone onLogout={() => logout()} loading={loggingOut} />
+        {/* Danger Zone */}
+        <DangerZone onLogout={() => logout()} loading={loggingOut} />
+      </div>
     </AccountLayout>
   );
 };

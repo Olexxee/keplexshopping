@@ -139,11 +139,10 @@ export const ItemsAdminPage = () => {
       header: "",
       render: (row: CatalogItem) => (
         <div className="flex items-center gap-2 justify-end">
-          <Button variant="secondary" size="sm" onClick={() => openEdit(row)}>
+          <Button size="sm" onClick={() => openEdit(row)}>
             Edit
           </Button>
           <Button
-            variant="danger"
             size="sm"
             onClick={() => setDeleteTarget(row)}
           >

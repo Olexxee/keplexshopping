@@ -20,22 +20,22 @@ const CartSkeleton = () => (
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex gap-5 animate-pulse"
+          className="bg-card rounded-xl border border-border shadow-md p-5 flex gap-5 animate-pulse"
         >
-          <div className="w-32 h-32 rounded-xl bg-gray-200 shrink-0" />
+          <div className="w-32 h-32 rounded-lg bg-muted/50 shrink-0" />
           <div className="flex-1 space-y-3 py-1">
-            <div className="h-4 w-40 bg-gray-200 rounded-lg" />
-            <div className="h-3 w-24 bg-gray-200 rounded-lg" />
-            <div className="h-8 w-32 bg-gray-200 rounded-full mt-4" />
+            <div className="h-4 w-40 bg-muted/50 rounded-lg" />
+            <div className="h-3 w-24 bg-muted/50 rounded-lg" />
+            <div className="h-8 w-32 bg-muted/50 rounded-full mt-4" />
           </div>
         </div>
       ))}
     </div>
-    <div className="bg-gradient-to-b from-white to-gray-50 rounded-2xl border border-gray-100 shadow-sm p-6 h-fit animate-pulse space-y-4">
-      <div className="h-5 w-32 bg-gray-200 rounded-lg" />
-      <div className="h-4 w-full bg-gray-200 rounded-lg" />
-      <div className="h-4 w-full bg-gray-200 rounded-lg" />
-      <div className="h-10 w-full bg-gray-200 rounded-xl mt-6" />
+    <div className="bg-card rounded-xl border border-border shadow-md p-6 h-fit animate-pulse space-y-4">
+      <div className="h-5 w-32 bg-muted/50 rounded-lg" />
+      <div className="h-4 w-full bg-muted/50 rounded-lg" />
+      <div className="h-4 w-full bg-muted/50 rounded-lg" />
+      <div className="h-10 w-full bg-muted/50 rounded-lg mt-6" />
     </div>
   </div>
 );
@@ -98,21 +98,21 @@ export const CartPage = () => {
       />
 
       {error && (
-        <div className="bg-red-50 border-2 border-red-200 text-red-700 text-sm rounded-2xl px-6 py-4 font-semibold">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg px-6 py-4 font-medium">
           {getErrorMessage(error)}
         </div>
       )}
 
       {items.length === 0 ? (
-        <Card className="py-16 text-center bg-gradient-to-b from-gray-50 to-white">
+        <Card className="py-16 text-center">
           <div className="mx-auto max-w-sm">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-brand-100">
-              <ShoppingCart className="h-10 w-10 text-brand-600" />
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-amber/10">
+              <ShoppingCart className="h-10 w-10 text-amber" />
             </div>
-            <h2 className="text-2xl font-bold text-primary">
+            <h2 className="font-display text-display-sm text-foreground">
               Your cart is empty
             </h2>
-            <p className="mt-3 text-base text-gray-600">
+            <p className="mt-3 text-muted-foreground">
               Start shopping and add items to your cart!
             </p>
             <div className="mt-8">
@@ -137,11 +137,12 @@ export const CartPage = () => {
                 removePending && removeVars === cartItem.itemId;
 
               return (
-                <article
+                <Card
                   key={cartItem.id}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-shadow duration-300 p-5 flex gap-5"
+                  hoverable
+                  className="p-5 flex gap-5"
                 >
-                  <div className="w-32 h-32 rounded-xl bg-gray-100 overflow-hidden shrink-0 ring-2 ring-gray-100">
+                  <div className="w-32 h-32 rounded-lg bg-muted/30 overflow-hidden shrink-0 ring-1 ring-border">
                     {image ? (
                       <img
                         src={image}
@@ -149,7 +150,7 @@ export const CartPage = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="h-full flex items-center justify-center text-xs text-gray-300 bg-gray-50">
+                      <div className="h-full flex items-center justify-center text-xs text-muted-foreground bg-muted/20">
                         No image
                       </div>
                     )}
@@ -159,13 +160,13 @@ export const CartPage = () => {
                     <div className="flex justify-between gap-4">
                       <div className="min-w-0">
                         <Link to={`/shop/${cartItem.itemId}`}>
-                          <h2 className="font-bold text-base text-primary hover:text-brand-600 transition-colors truncate">
+                          <h2 className="font-display font-semibold text-foreground hover:text-amber transition-colors truncate">
                             {cartItem.item?.name}
                           </h2>
                         </Link>
-                        <p className="text-sm text-brand-600 font-semibold mt-1">
+                        <p className="text-sm text-amber font-semibold mt-1">
                           ₦{Number(cartItem.unitPriceSnapshot).toLocaleString()}{" "}
-                          <span className="text-gray-400">each</span>
+                          <span className="text-muted-foreground font-normal">each</span>
                         </p>
                       </div>
 
@@ -176,7 +177,7 @@ export const CartPage = () => {
                           })
                         }
                         disabled={isRemovingThis || actionLoading}
-                        className="text-gray-300 hover:text-red-500 disabled:opacity-50 transition-colors shrink-0 hover:bg-red-50 p-2 rounded-lg"
+                        className="text-muted-foreground hover:text-destructive disabled:opacity-50 transition-colors shrink-0 hover:bg-destructive/10 p-2 rounded-lg"
                         aria-label="Remove item"
                       >
                         <Trash2 size={18} />
@@ -184,7 +185,7 @@ export const CartPage = () => {
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">
-                      <div className="flex items-center border-2 border-gray-200 rounded-full bg-white">
+                      <div className="flex items-center border border-border rounded-full bg-background">
                         <button
                           onClick={() =>
                             handleQuantityChange(
@@ -193,11 +194,11 @@ export const CartPage = () => {
                             )
                           }
                           disabled={isUpdatingThis || actionLoading}
-                          className="p-2 disabled:opacity-50 hover:text-brand-600 transition-colors"
+                          className="p-2 disabled:opacity-50 hover:text-amber transition-colors"
                         >
                           <Minus size={16} />
                         </button>
-                        <span className="px-4 font-bold text-base min-w-[2.5rem] text-center">
+                        <span className="px-4 font-semibold text-foreground min-w-[2.5rem] text-center">
                           {isUpdatingThis ? "…" : cartItem.quantity}
                         </span>
                         <button
@@ -208,18 +209,18 @@ export const CartPage = () => {
                             )
                           }
                           disabled={isUpdatingThis || actionLoading}
-                          className="p-2 disabled:opacity-50 hover:text-brand-600 transition-colors"
+                          className="p-2 disabled:opacity-50 hover:text-amber transition-colors"
                         >
                           <Plus size={16} />
                         </button>
                       </div>
 
-                      <p className="font-bold text-lg text-primary">
+                      <p className="font-display font-semibold text-xl text-foreground">
                         ₦{Number(cartItem.lineTotal).toLocaleString()}
                       </p>
                     </div>
                   </div>
-                </article>
+                </Card>
               );
             })}
           </div>
@@ -227,24 +228,24 @@ export const CartPage = () => {
           {/* Summary */}
           <aside className="space-y-5">
             <Card className="h-fit">
-              <h2 className="text-lg font-bold text-primary mb-5">
+              <h2 className="font-display text-display-sm text-foreground mb-5">
                 Order Summary
               </h2>
 
-              <div className="space-y-3.5 text-sm border-b border-gray-200 pb-5">
-                <div className="flex justify-between text-gray-600">
-                  <span className="font-medium">Items ({cart?.totalItems ?? 0})</span>
-                  <span className="font-semibold text-primary">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
+              <div className="space-y-3.5 text-sm border-b border-border pb-5">
+                <div className="flex justify-between">
+                  <span className="font-medium text-muted-foreground">Items ({cart?.totalItems ?? 0})</span>
+                  <span className="font-semibold text-foreground">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span className="font-medium">Shipping</span>
-                  <span className="font-semibold text-green-600">FREE</span>
+                <div className="flex justify-between">
+                  <span className="font-medium text-muted-foreground">Shipping</span>
+                  <span className="font-semibold text-green-600 dark:text-green-400">FREE</span>
                 </div>
               </div>
 
-              <div className="pt-5 flex justify-between font-bold text-lg">
-                <span className="text-primary">Total</span>
-                <span className="text-brand-600">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
+              <div className="pt-5 flex justify-between font-display font-bold text-lg">
+                <span className="text-foreground">Total</span>
+                <span className="text-amber">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
               </div>
 
               <div className="mt-6">
@@ -258,16 +259,16 @@ export const CartPage = () => {
             </Card>
 
             {/* Trust badges */}
-            <div className="bg-brand-50 rounded-2xl border border-brand-200 p-4 text-center">
-              <p className="text-xs font-semibold text-brand-700 uppercase tracking-wide">
+            <div className="bg-amber/5 rounded-xl border border-amber/20 p-4 text-center">
+              <p className="text-xs font-semibold text-amber uppercase tracking-wide">
                 🔒 Secure Checkout
               </p>
-              <p className="text-xs text-brand-600 mt-1">Powered by Paystack</p>
+              <p className="text-xs text-muted-foreground mt-1">Powered by Paystack</p>
             </div>
 
             {/* Continue shopping */}
             <Link to="/shop" className="block">
-              <Button variant="secondary" size="lg" fullWidth>
+              <Button variant="outline" size="lg" fullWidth>
                 Continue Shopping
               </Button>
             </Link>
