@@ -1,6 +1,5 @@
 import type { PropsWithChildren } from "react";
 import { useMe } from "../hooks/useAuth";
-import { Loader2 } from "lucide-react";
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const { isLoading } = useMe();
