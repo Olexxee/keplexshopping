@@ -18,9 +18,13 @@ const KEYS = {
 export const useRegistrations = (params?: { status?: string }) =>
   useQuery({
     queryKey: KEYS.list(params),
-    queryFn: () => getRegistrations(params),
+    queryFn: async () => {
+      const result = await getRegistrations(params);
+      // guard against non-array responses
+      return Array.isArray(result) ? result : [];
+    },
   });
-
+  
 export const useRegistration = (id: string | undefined) =>
   useQuery({
     queryKey: KEYS.detail(id!),

@@ -32,7 +32,12 @@ export const getRegistrations = async (params?: {
   status?: string;
 }): Promise<Registration[]> => {
   const res = await api.get(BASE, { params });
-  return res.data.data;
+  const payload = res.data.data;
+
+  // paginated response shape: { data: [], total, page, limit }
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  return [];
 };
 
 export const getRegistrationById = async (
