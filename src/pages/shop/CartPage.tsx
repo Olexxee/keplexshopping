@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Trash2, Minus, Plus, ShoppingCart, ArrowRight } from "lucide-react";
+import { Trash2, Minus, Plus, ShoppingCart, ArrowRight, Loader2 } from "lucide-react";
 
 import {
   useCart,
@@ -40,8 +40,14 @@ const CartSkeleton = () => (
   </div>
 );
 
+// Helper to safely get price values
+const getSafePrice = (value: any): number => {
+  const num = Number(value);
+  return isNaN(num) ? 0 : num;
+};
+
 export const CartPage = () => {
-  const { data: cart, isLoading, error } = useCart();
+  const { data: cart, isLoading, error, refetch } = useCart();
   const {
     mutate: updateItem,
     isPending: updatePending,
@@ -61,9 +67,44 @@ export const CartPage = () => {
     if (next < 1) return;
     updateItem(
       { itemId, quantity: next },
-      { onError: (err) => alert(getErrorMessage(err)) },
+      {
+        onSuccess: () => {
+          // Refetch cart after update to ensure fresh data
+          refetch();
+        },
+        onError: (err) => alert(getErrorMessage(err)),
+      }
     );
   };
+
+  const handleRemoveItem = (itemId: string) => {
+    removeItem(itemId, {
+      onSuccess: () => {
+        // Refetch cart after removal
+        refetch();
+      },
+      onError: (err) => alert(getErrorMessage(err)),
+    });
+  };
+
+  const handleClearCart = () => {
+    clearCart(undefined, {
+      onSuccess: () => {
+        // Refetch cart after clearing
+        refetch();
+      },
+      onError: (err) => alert(getErrorMessage(err)),
+    });
+  };
+
+  // Calculate totals safely
+  const subtotal = items.reduce((sum, item) => {
+    const price = getSafePrice(item.unitPriceSnapshot);
+    const quantity = getSafePrice(item.quantity);
+    return sum + (price * quantity);
+  }, 0);
+
+  const totalItems = items.reduce((sum, item) => sum + getSafePrice(item.quantity), 0);
 
   if (isLoading) {
     return (
@@ -84,14 +125,17 @@ export const CartPage = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                clearCart(undefined, {
-                  onError: (err) => alert(getErrorMessage(err)),
-                })
-              }
+              onClick={handleClearCart}
               disabled={clearPending}
             >
-              {clearPending ? "Clearing..." : "Clear cart"}
+              {clearPending ? (
+                <>
+                  <Loader2 size={14} className="mr-2 animate-spin" />
+                  Clearing...
+                </>
+              ) : (
+                "Clear cart"
+              )}
             </Button>
           ) : undefined
         }
@@ -135,6 +179,11 @@ export const CartPage = () => {
                 updatePending && updateVars?.itemId === cartItem.itemId;
               const isRemovingThis =
                 removePending && removeVars === cartItem.itemId;
+              
+              // Safe price calculations
+              const unitPrice = getSafePrice(cartItem.unitPriceSnapshot);
+              const quantity = getSafePrice(cartItem.quantity);
+              const lineTotal = unitPrice * quantity;
 
               return (
                 <Card
@@ -146,7 +195,7 @@ export const CartPage = () => {
                     {image ? (
                       <img
                         src={image}
-                        alt={cartItem.item?.name}
+                        alt={cartItem.item?.name || "Product"}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -161,26 +210,26 @@ export const CartPage = () => {
                       <div className="min-w-0">
                         <Link to={`/shop/${cartItem.itemId}`}>
                           <h2 className="font-display font-semibold text-foreground hover:text-amber transition-colors truncate">
-                            {cartItem.item?.name}
+                            {cartItem.item?.name || "Product"}
                           </h2>
                         </Link>
                         <p className="text-sm text-amber font-semibold mt-1">
-                          ₦{Number(cartItem.unitPriceSnapshot).toLocaleString()}{" "}
+                          ₦{unitPrice.toLocaleString()}{" "}
                           <span className="text-muted-foreground font-normal">each</span>
                         </p>
                       </div>
 
                       <button
-                        onClick={() =>
-                          removeItem(cartItem.itemId, {
-                            onError: (err) => alert(getErrorMessage(err)),
-                          })
-                        }
+                        onClick={() => handleRemoveItem(cartItem.itemId)}
                         disabled={isRemovingThis || actionLoading}
                         className="text-muted-foreground hover:text-destructive disabled:opacity-50 transition-colors shrink-0 hover:bg-destructive/10 p-2 rounded-lg"
                         aria-label="Remove item"
                       >
-                        <Trash2 size={18} />
+                        {isRemovingThis ? (
+                          <Loader2 size={18} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={18} />
+                        )}
                       </button>
                     </div>
 
@@ -190,7 +239,7 @@ export const CartPage = () => {
                           onClick={() =>
                             handleQuantityChange(
                               cartItem.itemId,
-                              cartItem.quantity - 1,
+                              quantity - 1,
                             )
                           }
                           disabled={isUpdatingThis || actionLoading}
@@ -199,13 +248,13 @@ export const CartPage = () => {
                           <Minus size={16} />
                         </button>
                         <span className="px-4 font-semibold text-foreground min-w-[2.5rem] text-center">
-                          {isUpdatingThis ? "…" : cartItem.quantity}
+                          {isUpdatingThis ? "…" : quantity}
                         </span>
                         <button
                           onClick={() =>
                             handleQuantityChange(
                               cartItem.itemId,
-                              cartItem.quantity + 1,
+                              quantity + 1,
                             )
                           }
                           disabled={isUpdatingThis || actionLoading}
@@ -216,7 +265,7 @@ export const CartPage = () => {
                       </div>
 
                       <p className="font-display font-semibold text-xl text-foreground">
-                        ₦{Number(cartItem.lineTotal).toLocaleString()}
+                        ₦{lineTotal.toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -234,8 +283,12 @@ export const CartPage = () => {
 
               <div className="space-y-3.5 text-sm border-b border-border pb-5">
                 <div className="flex justify-between">
-                  <span className="font-medium text-muted-foreground">Items ({cart?.totalItems ?? 0})</span>
-                  <span className="font-semibold text-foreground">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
+                  <span className="font-medium text-muted-foreground">
+                    Items ({totalItems})
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    ₦{subtotal.toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium text-muted-foreground">Shipping</span>
@@ -245,7 +298,7 @@ export const CartPage = () => {
 
               <div className="pt-5 flex justify-between font-display font-bold text-lg">
                 <span className="text-foreground">Total</span>
-                <span className="text-amber">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
+                <span className="text-amber">₦{subtotal.toLocaleString()}</span>
               </div>
 
               <div className="mt-6">

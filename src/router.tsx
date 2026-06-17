@@ -6,6 +6,7 @@ import { AdminRoute } from "./components/layout/AdminRoute";
 import { AuthContainer } from "./components/auth/AuthContainer";
 import { DashboardPage } from "./pages/dashboard/DashboardPage";
 import { CatalogPage } from "./pages/shop/CategoriesPage";
+import { HomePage } from "./pages/HomePage";
 import { ItemDetailPage } from "./pages/shop/ItemDetailPage";
 import { CartPage } from "./pages/shop/CartPage";
 import { BusinessConfigPage } from "./pages/admin/BusinessConfigPage";
@@ -28,10 +29,11 @@ import { SettingsPage } from "./pages/admin/SettingsPage";
 import { AuditPage } from "./pages/admin/AuditPage";  
 import AdminTrainingRegistrationsPage from "./pages/admin/AdminTrainingRegistrationsPage";
 import { TrainingProgramsPage } from "./pages/admin/TrainingProgramsPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
   
 
 export const router = createBrowserRouter([
-  { path: "/", element: <Navigate to="/dashboard" replace /> },
+  { path: "/", element: <Navigate to="/HomePage" replace /> },
   { path: "/auth", element: <AuthContainer /> },
 
   {
@@ -42,6 +44,7 @@ export const router = createBrowserRouter([
       {
         element: <AppLayout />,
         children: [
+          { path: "/HomePage", element: <HomePage /> },
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/shop", element: <CatalogPage /> },
           { path: "/shop/:itemId", element: <ItemDetailPage /> },
@@ -57,6 +60,8 @@ export const router = createBrowserRouter([
           { path: "/profile/notifications", element: <NotificationsPage /> },
         ],
       },
+
+      
 
       {
         element: <AdminRoute />,
@@ -82,5 +87,9 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
   },
 ]);
