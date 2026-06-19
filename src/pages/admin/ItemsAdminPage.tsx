@@ -17,6 +17,7 @@ import { Button } from "../../components/ui/Button";
 
 import { getErrorMessage } from "../../utils/error";
 import type { CatalogItem } from "../../types/catalog.types";
+import { Package, Image, AlertCircle } from "lucide-react";
 
 export const ItemsAdminPage = () => {
   const { data: items = [], isLoading } = useItems();
@@ -55,7 +56,7 @@ export const ItemsAdminPage = () => {
         {
           onSuccess: () => setFormModal(false),
           onError: (err) => setFormError(getErrorMessage(err)),
-        },
+        }
       );
     } else {
       createItem(formData, {
@@ -73,7 +74,7 @@ export const ItemsAdminPage = () => {
         const image = row.media?.[0]?.url;
         return (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-muted/30 overflow-hidden shrink-0">
               {image ? (
                 <img
                   src={image}
@@ -81,14 +82,14 @@ export const ItemsAdminPage = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
-                  —
+                <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground bg-muted/20">
+                  <Package size={16} className="text-muted-foreground" />
                 </div>
               )}
             </div>
             <div>
-              <p className="font-medium text-gray-900">{row.name}</p>
-              <p className="text-xs text-gray-400">{row.category?.name}</p>
+              <p className="font-medium text-foreground">{row.name}</p>
+              <p className="text-xs text-muted-foreground">{row.category?.name || "Uncategorized"}</p>
             </div>
           </div>
         );
@@ -98,7 +99,7 @@ export const ItemsAdminPage = () => {
       key: "type",
       header: "Type",
       render: (row: CatalogItem) => (
-        <span className="text-xs font-medium capitalize">
+        <span className="text-xs font-medium capitalize px-2.5 py-1 rounded-full bg-amber/10 text-amber">
           {row.itemType.toLowerCase()}
         </span>
       ),
@@ -107,7 +108,7 @@ export const ItemsAdminPage = () => {
       key: "price",
       header: "Price",
       render: (row: CatalogItem) => (
-        <span className="font-medium">
+        <span className="font-display font-semibold text-amber">
           ₦{Number(row.price).toLocaleString()}
         </span>
       ),
@@ -154,13 +155,15 @@ export const ItemsAdminPage = () => {
   ];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 py-4">
       <PageHeader
         label="Admin"
         title="Items"
+        description="Manage your product and service catalog"
         action={
-          <Button size="sm" onClick={openCreate}>
-            + New item
+          <Button size="sm" onClick={openCreate} className="gap-2">
+            <Package size={16} />
+            New Item
           </Button>
         }
       />
@@ -170,25 +173,29 @@ export const ItemsAdminPage = () => {
         data={items}
         isLoading={isLoading}
         keyExtractor={(i) => i.id}
-        emptyMessage="No items yet."
+        emptyMessage="No items found. Create your first item to get started."
       />
 
       <Modal
         open={formModal}
         onClose={() => setFormModal(false)}
-        title={editTarget ? "Edit item" : "New item"}
+        title={editTarget ? "Edit Item" : "New Item"}
         width="max-w-xl"
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {formError && (
-            <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">
-              {formError}
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg px-4 py-3 flex items-start gap-2">
+              <AlertCircle size={16} className="shrink-0 mt-0.5" />
+              <span>{formError}</span>
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2 space-y-1">
-              <label className="text-sm font-medium text-gray-700">Name</label>
+            {/* Name */}
+            <div className="col-span-2 space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Name <span className="text-destructive">*</span>
+              </label>
               <input
                 name="name"
                 defaultValue={editTarget?.name}
@@ -198,37 +205,44 @@ export const ItemsAdminPage = () => {
                     e.currentTarget.value
                       .toLowerCase()
                       .replace(/\s+/g, "-")
-                      .replace(/[^a-z0-9-]/g, ""),
+                      .replace(/[^a-z0-9-]/g, "")
                   );
                 }}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition"
+                className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
+                placeholder="Enter item name"
               />
             </div>
 
             <input type="hidden" name="slug" value={slug} />
 
-            <div className="col-span-2 space-y-1">
-              <label className="text-sm font-medium text-gray-700">
+            {/* Description */}
+            <div className="col-span-2 space-y-2">
+              <label className="text-sm font-medium text-foreground">
                 Description
               </label>
               <textarea
                 name="description"
                 defaultValue={editTarget?.description}
                 rows={3}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none resize-none focus:border-gray-400 transition"
+                className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200 resize-y"
+                placeholder="Describe your item..."
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">
-                Price (₦)
+            {/* Price */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Price (₦) <span className="text-destructive">*</span>
               </label>
               <input
                 name="price"
                 type="number"
                 defaultValue={editTarget ? Number(editTarget.price) : ""}
                 required
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition"
+                min="0"
+                step="0.01"
+                className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
+                placeholder="0.00"
               />
             </div>
 
@@ -253,21 +267,22 @@ export const ItemsAdminPage = () => {
               <select
                 name="itemType"
                 defaultValue={editTarget?.itemType ?? "PRODUCT"}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none bg-white"
+                className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
               >
                 <option value="PRODUCT">Product</option>
                 <option value="SERVICE">Service</option>
               </select>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">
+            {/* Category */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
                 Category
               </label>
               <select
                 name="categoryId"
                 defaultValue={editTarget?.categoryId ?? ""}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none bg-white"
+                className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
               >
                 <option value="">No category</option>
                 {categories.map((c) => (
@@ -285,7 +300,7 @@ export const ItemsAdminPage = () => {
               <select
                 name="status"
                 defaultValue={editTarget?.status ?? "ACTIVE"}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none bg-white"
+                className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
               >
                 <option value="ACTIVE">Active</option>
                 <option value="INACTIVE">Inactive</option>
@@ -293,11 +308,13 @@ export const ItemsAdminPage = () => {
               </select>
             </div>
 
-            <div className="col-span-2 space-y-1">
-              <label className="text-sm font-medium text-gray-700">
-                Images{" "}
+            {/* Images */}
+            <div className="col-span-2 space-y-2">
+              <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                <Image size={14} className="text-amber" />
+                Images
                 {editTarget && (
-                  <span className="text-gray-400 font-normal">
+                  <span className="text-xs text-muted-foreground font-normal">
                     (leave empty to keep existing)
                   </span>
                 )}
@@ -307,18 +324,35 @@ export const ItemsAdminPage = () => {
                 type="file"
                 accept="image/*"
                 multiple
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none"
+                className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber file:text-white hover:file:bg-amber-light file:cursor-pointer"
               />
+              <p className="text-xs text-muted-foreground">
+                Upload one or more images (JPG, PNG, WEBP)
+              </p>
             </div>
           </div>
 
-          <Button type="submit" fullWidth disabled={creating || updating}>
-            {creating || updating
-              ? "Saving..."
-              : editTarget
-                ? "Save changes"
-                : "Create item"}
-          </Button>
+          <div className="flex gap-3 pt-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setFormModal(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={creating || updating}
+              className="flex-1"
+            >
+              {creating || updating
+                ? "Saving..."
+                : editTarget
+                ? "Save Changes"
+                : "Create Item"}
+            </Button>
+          </div>
         </form>
       </Modal>
 
@@ -330,8 +364,8 @@ export const ItemsAdminPage = () => {
             onSuccess: () => setDeleteTarget(null),
           })
         }
-        title="Delete item"
-        message={`Are you sure you want to delete "${deleteTarget?.name}"? This cannot be undone.`}
+        title="Delete Item"
+        message={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
         confirmLabel="Delete"
         isPending={deleting}
         variant="danger"

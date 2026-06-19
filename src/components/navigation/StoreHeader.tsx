@@ -1,56 +1,160 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, LogOut, UserCircle, Menu, X, Search } from "lucide-react";
-import { useCart } from "../../hooks/useCart";
+import { Link, NavLink } from "react-router-dom";
+import { 
+  ShoppingCart, User, LogOut, UserCircle, Menu, X, 
+  Heart, LayoutDashboard, Settings, Bell, Shield, Award,
+  Package, MapPin, CreditCard, CheckCircle, XCircle,
+  AlertCircle, Loader2
+} from "lucide-react";
 import { useMe } from "../../hooks/useAuth";
 import { useLogout } from "../../hooks/useAuth";
+import { useCart } from "../../hooks/useCart";
+import { 
+  useNotifications, 
+  useUnreadNotifications,  // Changed from useUnreadCount
+  useMarkNotificationRead,
+  useMarkAllNotificationsRead,
+  useDeleteNotification
+} from "../../hooks/useNotifications";
+import { getErrorMessage } from "../../utils/error";
 
 export const StoreHeader = () => {
   const { data: user } = useMe();
   const { data: cart } = useCart();
   const cartCount = cart?.totalItems ?? 0;
   const { mutate: logout, isPending: loggingOut } = useLogout();
+  const { data: cart } = useCart();
+  
+  // Notification hooks - use the correct names
+  const { data: notifications = [], isLoading: notificationsLoading } = useNotifications();
+  const { data: unreadCount = 0, refetch: refetchUnread } = useUnreadNotifications(); // Changed from useUnreadCount
+  const { mutate: markRead, isPending: markingRead } = useMarkNotificationRead();
+  const { mutate: markAllRead, isPending: markingAllRead } = useMarkAllNotificationsRead();
+  const { mutate: deleteNotif, isPending: deletingNotif } = useDeleteNotification();
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  const cartCount = cart?.totalItems ?? 0;
 
   const badgeCount = cartCount > 99 ? "99+" : cartCount.toString();
 
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
+      }
+      if (notificationRef.current && !notificationRef.current.contains(e.target as Node)) {
+        setNotificationsOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Handle search submit
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/shop?search=${encodeURIComponent(searchQuery)}`);
-      setSearchQuery("");
-      setMobileSearchOpen(false);
+  // Refetch unread count when notifications are opened
+  useEffect(() => {
+    if (notificationsOpen) {
+      refetchUnread();
     }
+  }, [notificationsOpen, refetchUnread]);
+
+  const getNotificationIcon = (type: string) => {
+    switch(type) {
+      case "success":
+      case "order_delivered":
+      case "payment_received":
+        return <CheckCircle size={14} className="text-green-500" />;
+      case "info":
+        return <AlertCircle size={14} className="text-blue-500" />;
+      case "promo":
+      case "flash_sale":
+        return <Shield size={14} className="text-amber" />;
+      case "warning":
+        return <AlertCircle size={14} className="text-orange-500" />;
+      case "error":
+        return <XCircle size={14} className="text-red-500" />;
+      default:
+        return <Bell size={14} className="text-muted-foreground" />;
+    }
+  };
+
+  const getNotificationColor = (type: string) => {
+    switch(type) {
+      case "success":
+      case "order_delivered":
+      case "payment_received":
+        return "bg-green-500/10";
+      case "info":
+        return "bg-blue-500/10";
+      case "promo":
+      case "flash_sale":
+        return "bg-amber/10";
+      case "warning":
+        return "bg-orange-500/10";
+      case "error":
+        return "bg-red-500/10";
+      default:
+        return "bg-muted/30";
+    }
+  };
+
+  const handleMarkRead = (id: string) => {
+    markRead(id, {
+      onSuccess: () => {
+        refetchUnread();
+      },
+      onError: (err) => {
+        console.error("Failed to mark notification as read:", err);
+      }
+    });
+  };
+
+  const handleMarkAllRead = () => {
+    markAllRead(undefined, {
+      onSuccess: () => {
+        refetchUnread();
+      },
+      onError: (err) => {
+        console.error("Failed to mark all notifications as read:", err);
+      }
+    });
+  };
+
+  const handleDeleteNotification = (id: string) => {
+    deleteNotif(id, {
+      onSuccess: () => {
+        refetchUnread();
+      },
+      onError: (err) => {
+        console.error("Failed to delete notification:", err);
+      }
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diff < 60) return `${diff} seconds ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
+    return date.toLocaleDateString();
   };
 
   return (
     <>
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-        {/* Main Header Row */}
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between gap-4 h-16">
             {/* Logo - Left */}
-            <Link to="/shop" className="flex items-center gap-3 group shrink-0">
+            <Link to="/" className="flex items-center gap-3 group shrink-0">
               <div className="h-9 w-9 rounded-lg bg-gradient-amber flex items-center justify-center shadow-amber group-hover:shadow-glow transition-all duration-300">
                 <span className="text-white font-display font-bold text-lg">
                   K
@@ -60,7 +164,7 @@ export const StoreHeader = () => {
                 <p className="font-display font-semibold text-xl tracking-tight text-foreground group-hover:text-amber transition-colors duration-300">
                   Keplex
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground group-hover:text-amber/70 transition-colors">
                   Modern Marketplace
                 </p>
               </div>
@@ -81,25 +185,113 @@ export const StoreHeader = () => {
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-muted-foreground hover:text-amber hover:bg-muted transition-colors"
-                  aria-label="Search"
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className="relative p-2 rounded-lg hover:bg-muted transition-colors"
+                  aria-label="Notifications"
                 >
-                  <Search size={18} />
+                  <Bell size={20} className="text-foreground hover:text-amber transition-colors" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-medium animate-pulse">
+                      {unreadCount}
+                    </span>
+                  )}
                 </button>
-              </div>
-            </form>
 
-            {/* Right Actions */}
-            <div className="flex items-center gap-3">
-              {/* Search Icon - Mobile */}
-              <button
-                onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-                className="md:hidden p-2 rounded-lg text-foreground hover:bg-muted hover:text-amber transition-colors"
-                aria-label="Search"
-              >
-                <Search size={20} />
-              </button>
+                {notificationsOpen && (
+                  <div className="absolute right-0 mt-2 w-80 max-h-[500px] bg-card border border-border rounded-xl shadow-lg z-50 animate-zoom-in overflow-hidden">
+                    <div className="p-4 border-b border-border bg-gradient-subtle">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-display font-semibold text-foreground">Notifications</h3>
+                        {unreadCount > 0 && (
+                          <button 
+                            onClick={handleMarkAllRead}
+                            disabled={markingAllRead}
+                            className="text-xs text-amber hover:text-amber-light transition-colors disabled:opacity-50 flex items-center gap-1"
+                          >
+                            {markingAllRead ? (
+                              <Loader2 size={12} className="animate-spin" />
+                            ) : null}
+                            Mark all as read
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="max-h-[350px] overflow-y-auto">
+                      {notificationsLoading ? (
+                        <div className="p-8 text-center">
+                          <Loader2 size={32} className="mx-auto text-amber animate-spin mb-3" />
+                          <p className="text-sm text-muted-foreground">Loading notifications...</p>
+                        </div>
+                      ) : notifications.length === 0 ? (
+                        <div className="p-8 text-center">
+                          <Bell size={32} className="mx-auto text-muted-foreground mb-3" />
+                          <p className="text-sm text-muted-foreground">No notifications yet</p>
+                          <p className="text-xs text-muted-foreground mt-1">We'll notify you when something happens</p>
+                        </div>
+                      ) : (
+                        notifications.map((notif: any) => (
+                          <div
+                            key={notif.id}
+                            className={`p-4 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group ${
+                              !notif.read ? "bg-amber/5" : ""
+                            }`}
+                            onClick={() => {
+                              if (!notif.read) {
+                                handleMarkRead(notif.id);
+                              }
+                            }}
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className={`h-8 w-8 rounded-full ${getNotificationColor(notif.type)} flex items-center justify-center shrink-0`}>
+                                {getNotificationIcon(notif.type)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-1">
+                                  <p className="text-sm font-semibold text-foreground">
+                                    {notif.title}
+                                  </p>
+                                  {!notif.read && (
+                                    <span className="h-2 w-2 rounded-full bg-amber shrink-0" />
+                                  )}
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {notif.message}
+                                </p>
+                                <div className="flex items-center justify-between mt-1.5">
+                                  <p className="text-xs text-muted-foreground">
+                                    {formatTime(notif.createdAt)}
+                                  </p>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteNotification(notif.id);
+                                    }}
+                                    disabled={deletingNotif}
+                                    className="text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                                  >
+                                    <XCircle size={14} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    
+                    <div className="p-3 border-t border-border bg-muted/30">
+                      <Link
+                        to="/notifications"
+                        onClick={() => setNotificationsOpen(false)}
+                        className="block text-center text-sm text-amber hover:text-amber-light transition-colors"
+                      >
+                        View all notifications
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Cart Icon */}
               <Link
@@ -131,33 +323,102 @@ export const StoreHeader = () => {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-card border border-border rounded-xl shadow-lg py-1.5 z-50 animate-zoom-in">
+                  <div className="absolute right-0 mt-2 w-72 bg-card border border-border rounded-xl shadow-lg py-1.5 z-50 animate-zoom-in">
+                    {/* User Info Section */}
                     <div className="p-4 border-b border-border bg-gradient-subtle">
-                      <h3 className="font-display font-semibold text-foreground">
-                        {user?.fullName || "Guest User"}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-0.5">
-                        {user?.email || "Not signed in"}
-                      </p>
+                      <div className="flex items-center gap-3">
+                        <div className="h-12 w-12 rounded-full bg-gradient-amber flex items-center justify-center shadow-amber">
+                          <span className="text-white font-display font-bold text-lg">
+                            {user?.fullName?.charAt(0).toUpperCase() || "U"}
+                          </span>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-display font-semibold text-foreground">
+                            {user?.fullName || "Guest User"}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {user?.email || "Not signed in"}
+                          </p>
+                          {user?.isVerified && (
+                            <span className="inline-flex items-center gap-1 mt-1 text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
+                              <Shield size={10} />
+                              Verified Account
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
-                    <Link
-                      to="/profile"
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-amber transition-colors duration-200"
-                    >
-                      <UserCircle size={15} />
-                      Profile
-                    </Link>
+                    {/* Account Navigation */}
+                    <div className="py-2">
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-amber transition-colors duration-200"
+                      >
+                        <LayoutDashboard size={16} />
+                        Dashboard
+                      </Link>
+                      
+                      <Link
+                        to="/profile"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-amber transition-colors duration-200"
+                      >
+                        <UserCircle size={16} />
+                        Profile
+                      </Link>
+                      
+                      <Link
+                        to="/wishlist"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-amber transition-colors duration-200"
+                      >
+                        <Heart size={16} />
+                        Wishlist
+                      </Link>
+                      
+                      <Link
+                        to="/orders"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-amber transition-colors duration-200"
+                      >
+                        <Package size={16} />
+                        My Orders
+                      </Link>
+                      
+                      <Link
+                        to="/addresses"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-amber transition-colors duration-200"
+                      >
+                        <MapPin size={16} />
+                        Addresses
+                      </Link>
+                    </div>
 
-                    <button
-                      onClick={() => logout()}
-                      disabled={loggingOut}
-                      className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors duration-200 disabled:opacity-50"
-                    >
-                      <LogOut size={15} />
-                      {loggingOut ? "Signing out..." : "Sign out"}
-                    </button>
+                    <div className="border-t border-border my-1" />
+
+                    {/* Settings & Logout */}
+                    <div className="py-2">
+                      <Link
+                        to="/settings"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-amber transition-colors duration-200"
+                      >
+                        <Settings size={16} />
+                        Settings
+                      </Link>
+                      
+                      <button
+                        onClick={() => logout()}
+                        disabled={loggingOut}
+                        className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors duration-200 disabled:opacity-50"
+                      >
+                        <LogOut size={16} />
+                        {loggingOut ? "Signing out..." : "Sign out"}
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -172,31 +433,6 @@ export const StoreHeader = () => {
               </button>
             </div>
           </div>
-
-          {/* Mobile Search Bar */}
-          {mobileSearchOpen && (
-            <div className="md:hidden py-3 border-t border-border animate-slide-in">
-              <form onSubmit={handleSearch} className="flex gap-2">
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search products..."
-                    className="w-full px-4 py-2.5 pl-10 rounded-full border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent"
-                    autoFocus
-                  />
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                </div>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 bg-amber text-white rounded-full hover:bg-amber-light transition-colors font-medium"
-                >
-                  Search
-                </button>
-              </form>
-            </div>
-          )}
         </div>
       </header>
 
@@ -256,6 +492,16 @@ export const StoreHeader = () => {
                       {user.email}
                     </p>
                   </div>
+                  
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-muted hover:text-amber transition-colors"
+                  >
+                    <LayoutDashboard size={20} />
+                    Dashboard
+                  </Link>
+                  
                   <Link
                     to="/profile"
                     onClick={() => setMobileMenuOpen(false)}
@@ -264,6 +510,25 @@ export const StoreHeader = () => {
                     <UserCircle size={20} />
                     Profile
                   </Link>
+                  
+                  <Link
+                    to="/wishlist"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-muted hover:text-amber transition-colors"
+                  >
+                    <Heart size={20} />
+                    Wishlist
+                  </Link>
+                  
+                  <Link
+                    to="/settings"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-muted hover:text-amber transition-colors"
+                  >
+                    <Settings size={20} />
+                    Settings
+                  </Link>
+                  
                   <button
                     onClick={() => {
                       logout();

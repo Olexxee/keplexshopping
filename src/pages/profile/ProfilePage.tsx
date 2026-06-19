@@ -8,6 +8,23 @@ import { useMe } from "../../hooks/useAuth";
 import { useOrders } from "../../hooks/useOrders";
 import { useAddresses } from "../../hooks/useAddresses";
 import { useLogout } from "../../hooks/useLogout";
+import type { LucideIcon } from "lucide-react";
+import { 
+  Package, 
+  MapPin, 
+  User, 
+  Shield, 
+  CreditCard, 
+  Bell,
+  ShoppingBag
+} from "lucide-react";
+
+interface MenuItem {
+  title: string;
+  subtitle: string;
+  to: string;
+  icon: LucideIcon;
+}
 
 export const ProfilePage = () => {
   const { data: user } = useMe();
@@ -21,36 +38,42 @@ export const ProfilePage = () => {
   const ordersCount = orders?.pagination?.total ?? 0;
   const addressesCount = addresses.length;
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     {
       title: "Order History",
-      subtitle: `${ordersCount} order${ordersCount !== 1 ? 's' : ''}`,
+      subtitle: `${ordersCount} order${ordersCount !== 1 ? 's' : ''} placed`,
       to: "/orders",
+      icon: Package,
     },
     {
       title: "Addresses",
       subtitle: `${addressesCount} saved address${addressesCount !== 1 ? 's' : ''}`,
       to: "/addresses",
+      icon: MapPin,
     },
     {
       title: "Personal Information",
       subtitle: user.email,
       to: "/profile/edit",
+      icon: User,
     },
     {
       title: "Security",
       subtitle: "Change password",
       to: "/profile/password",
+      icon: Shield,
     },
     {
       title: "Payment Methods",
       subtitle: "Manage cards",
       to: "/profile/payment-methods",
+      icon: CreditCard,
     },
     {
       title: "Notifications",
       subtitle: "Manage alerts",
       to: "/profile/notifications",
+      icon: Bell,
     },
   ];
 
@@ -72,7 +95,7 @@ export const ProfilePage = () => {
             <h2 className="font-display text-display-sm text-foreground">
               Account Settings
             </h2>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground bg-muted/30 px-3 py-1 rounded-full">
               {menuItems.length} items
             </span>
           </div>

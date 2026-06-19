@@ -95,6 +95,18 @@ export const TrainingFormModal = ({ open, onClose, training }: Props) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => setForm((p) => ({ ...p, [field]: e.target.value }));
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -130,6 +142,8 @@ export const TrainingFormModal = ({ open, onClose, training }: Props) => {
       setError(msg);
     }
   };
+
+  const isLoading = createMutation.isPending || updateMutation.isPending || uploadMedia.isPending || isSubmitting;
 
   if (!open) return null;
 
@@ -323,6 +337,7 @@ export const TrainingFormModal = ({ open, onClose, training }: Props) => {
           <div className="flex justify-end gap-3 pt-4 border-t">
             <button
               type="button"
+              variant="ghost"
               onClick={onClose}
               disabled={isSaving}
               className="px-5 py-2.5 rounded-xl border border-neutral-200 text-sm font-medium hover:bg-neutral-50 disabled:opacity-40 transition-colors"

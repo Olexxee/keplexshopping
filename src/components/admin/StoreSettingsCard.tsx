@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { useUpdateBusinessConfig } from "../../hooks/useBusinessConfigMutations";
+import { Card } from "../ui/Card";
+import { Button } from "../ui/Button";
+import { Save, Store } from "lucide-react";
 
-export const StoreSettingsCard = ({ settings }: any) => {
+interface StoreSettingsCardProps {
+  settings: {
+    showImportedCategory: boolean;
+    [key: string]: any;
+  };
+}
+
+export const StoreSettingsCard = ({ settings }: StoreSettingsCardProps) => {
   const [form, setForm] = useState(settings);
-
   const { mutate, isPending } = useUpdateBusinessConfig();
 
   const save = () => {
@@ -14,20 +23,19 @@ export const StoreSettingsCard = ({ settings }: any) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6">
-      <div className="flex justify-between mb-5">
-        <h2 className="font-semibold text-lg">Store Settings</h2>
-
-        <button
-          onClick={save}
-          disabled={isPending}
-          className="bg-black text-white px-4 py-2 rounded-xl"
-        >
-          Save
-        </button>
+    <Card className="p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h2 className="font-display text-display-sm text-foreground flex items-center gap-2">
+          <Store size={20} className="text-amber" />
+          Store Settings
+        </h2>
+        <Button onClick={save} disabled={isPending} size="sm" className="gap-2">
+          <Save size={16} />
+          {isPending ? "Saving..." : "Save"}
+        </Button>
       </div>
 
-      <label className="flex gap-3 items-center">
+      <label className="flex items-start gap-3 p-4 rounded-lg bg-amber/5 border border-amber/10 cursor-pointer hover:bg-amber/10 transition-colors">
         <input
           type="checkbox"
           checked={form.showImportedCategory}
@@ -37,10 +45,17 @@ export const StoreSettingsCard = ({ settings }: any) => {
               showImportedCategory: e.target.checked,
             })
           }
+          className="h-4 w-4 rounded border-input text-amber focus:ring-amber focus:ring-offset-0 mt-0.5"
         />
-        Show Importation Category
+        <div>
+          <span className="text-sm font-medium text-foreground">
+            Show Importation Category
+          </span>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Display imported product categories in your store
+          </p>
+        </div>
       </label>
-    </div>
+    </Card>
   );
 };
-

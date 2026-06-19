@@ -40,8 +40,14 @@ const CartSkeleton = () => (
   </div>
 );
 
+// Helper to safely get price values
+const getSafePrice = (value: any): number => {
+  const num = Number(value);
+  return isNaN(num) ? 0 : num;
+};
+
 export const CartPage = () => {
-  const { data: cart, isLoading, error } = useCart();
+  const { data: cart, isLoading, error, refetch } = useCart();
   const {
     mutate: updateItem,
     isPending: updatePending,
@@ -71,6 +77,35 @@ export const CartPage = () => {
       },
     );
   };
+
+  const handleRemoveItem = (itemId: string) => {
+    removeItem(itemId, {
+      onSuccess: () => {
+        // Refetch cart after removal
+        refetch();
+      },
+      onError: (err) => alert(getErrorMessage(err)),
+    });
+  };
+
+  const handleClearCart = () => {
+    clearCart(undefined, {
+      onSuccess: () => {
+        // Refetch cart after clearing
+        refetch();
+      },
+      onError: (err) => alert(getErrorMessage(err)),
+    });
+  };
+
+  // Calculate totals safely
+  const subtotal = items.reduce((sum, item) => {
+    const price = getSafePrice(item.unitPriceSnapshot);
+    const quantity = getSafePrice(item.quantity);
+    return sum + (price * quantity);
+  }, 0);
+
+  const totalItems = items.reduce((sum, item) => sum + getSafePrice(item.quantity), 0);
 
   if (isLoading) {
     return (
@@ -104,14 +139,17 @@ export const CartPage = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                clearCart(undefined, {
-                  onError: (err) => alert(getErrorMessage(err)),
-                })
-              }
+              onClick={handleClearCart}
               disabled={clearPending}
             >
-              {clearPending ? "Clearing..." : "Clear cart"}
+              {clearPending ? (
+                <>
+                  <Loader2 size={14} className="mr-2 animate-spin" />
+                  Clearing...
+                </>
+              ) : (
+                "Clear cart"
+              )}
             </Button>
           ) : undefined
         }
@@ -160,7 +198,7 @@ export const CartPage = () => {
                     {image ? (
                       <img
                         src={image}
-                        alt={cartItem.item?.name}
+                        alt={cartItem.item?.name || "Product"}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -185,7 +223,7 @@ export const CartPage = () => {
                       <div className="min-w-0">
                         <Link to={`/shop/${cartItem.itemId}`}>
                           <h2 className="font-display font-semibold text-foreground hover:text-amber transition-colors truncate">
-                            {cartItem.item?.name}
+                            {cartItem.item?.name || "Product"}
                           </h2>
                         </Link>
                         <p className="text-sm text-amber font-semibold mt-1">
@@ -220,7 +258,7 @@ export const CartPage = () => {
                           onClick={() =>
                             handleQuantityChange(
                               cartItem.itemId,
-                              cartItem.quantity - 1,
+                              quantity - 1,
                             )
                           }
                           disabled={isUpdatingThis || actionLoading}
@@ -229,13 +267,13 @@ export const CartPage = () => {
                           <Minus size={16} />
                         </button>
                         <span className="px-4 font-semibold text-foreground min-w-[2.5rem] text-center">
-                          {isUpdatingThis ? "…" : cartItem.quantity}
+                          {isUpdatingThis ? "…" : quantity}
                         </span>
                         <button
                           onClick={() =>
                             handleQuantityChange(
                               cartItem.itemId,
-                              cartItem.quantity + 1,
+                              quantity + 1,
                             )
                           }
                           disabled={isUpdatingThis || actionLoading}

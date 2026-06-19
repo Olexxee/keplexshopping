@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 import { useMe } from "../../hooks/useAuth";
+import { Card } from "../../components/ui/Card";
 
 type Mode = "login" | "register";
 
@@ -15,43 +16,66 @@ export const AuthContainer = () => {
   if (user) return <Navigate to="/dashboard" replace />;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-radial from-amber/5 via-background to-background px-4">
+      {/* Decorative background elements */}
+      <div className="fixed top-0 left-0 w-96 h-96 bg-amber/20 blur-[120px] rounded-full pointer-events-none animate-float" />
+      <div className="fixed bottom-0 right-0 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full pointer-events-none animate-float-delayed" />
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Brand mark */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">MyApp</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {mode === "login" ? "Welcome back" : "Create your account"}
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-amber shadow-amber mb-4 mx-auto">
+            <span className="text-white font-display font-bold text-2xl">K</span>
+          </div>
+          <h1 className="font-display text-display-md text-foreground">
+            Keplex
+          </h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            {mode === "login" ? "Welcome back to your marketplace" : "Create your account to start shopping"}
           </p>
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
-          {/* Tab toggle — your exact design */}
-          <div className="flex gap-2 mb-6">
+        <Card padding="none" className="overflow-hidden">
+          {/* Tab toggle */}
+          <div className="flex gap-1 p-1 bg-muted/30 border-b border-border">
             <button
               onClick={() => setMode("login")}
-              className={`flex-1 py-2 rounded-xl text-sm font-medium transition ${
+              className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 mode === "login"
-                  ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-amber text-white shadow-amber"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
-              Login
+              Sign In
             </button>
             <button
               onClick={() => setMode("register")}
-              className={`flex-1 py-2 rounded-xl text-sm font-medium transition ${
+              className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 mode === "register"
-                  ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-amber text-white shadow-amber"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
-              Register
+              Create Account
             </button>
           </div>
 
-          {mode === "login" ? <LoginForm /> : <RegisterForm />}
-        </div>
+          <div className="p-6">
+            {mode === "login" ? <LoginForm /> : <RegisterForm />}
+          </div>
+        </Card>
+
+        {/* Footer note */}
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          By continuing, you agree to our{" "}
+          <a href="/terms" className="text-amber hover:text-amber-light transition-colors">
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a href="/privacy" className="text-amber hover:text-amber-light transition-colors">
+            Privacy Policy
+          </a>
+        </p>
       </div>
     </div>
   );

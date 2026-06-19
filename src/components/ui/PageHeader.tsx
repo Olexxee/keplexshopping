@@ -5,24 +5,37 @@ interface Props {
   title: string;
   description?: string;
   action?: React.ReactNode;
+  image?: string;
 }
 
-export const PageHeader = ({ label, title, description, action }: Props) => {
+export const PageHeader = ({ label, title, description, action, image }: Props) => {
   return (
-    <Card padding="md" className="mb-6 bg-gradient-to-r from-purple-50 via-pink-50 to-cyan-50 border-purple-300">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          {label && (
-            <p className="text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {label}
-            </p>
-          )}
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mt-1">{title}</h1>
-          {description && (
-            <p className="text-sm text-purple-600 mt-2">{description}</p>
-          )}
+    <Card padding="none" className="mb-6 overflow-hidden relative">
+      {image && (
+        <div className="absolute inset-0">
+          <img src={image} alt="" className="w-full h-full object-cover opacity-10" />
         </div>
-        {action && <div className="ml-4">{action}</div>}
+      )}
+      
+      <div className={`relative z-10 p-6 ${image ? 'bg-gradient-amber/20' : ''}`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex-1">
+            {label && (
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber">
+                {label}
+              </p>
+            )}
+            <h1 className="font-display text-display-md text-foreground mt-1">
+              {title}
+            </h1>
+            {description && (
+              <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+                {description}
+              </p>
+            )}
+          </div>
+          {action && <div className="shrink-0">{action}</div>}
+        </div>
       </div>
     </Card>
   );

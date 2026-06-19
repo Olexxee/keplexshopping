@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useLogout } from "../../hooks/useAuth";
 import { useMe } from "../../hooks/useAuth";
+import { cn } from "../../lib/cn";
 
 const NAV_ITEMS = [
   { to: "/admin", icon: LayoutDashboard, label: "Overview", end: true },
@@ -25,7 +26,7 @@ const NAV_ITEMS = [
   { to: "/admin/items", icon: Package, label: "Items" },
   { to: "/admin/categories", icon: Tag, label: "Categories" },
   { to: "/admin/orders", icon: ShoppingBag, label: "Orders" },
-  { to: "/admin/settings", icon: Building2, label: "Settings" },
+  { to: "/admin/settings", icon: Settings, label: "Settings" },
   { to: "/admin/audit", icon: ClipboardList, label: "Audit Logs" },
   { to: "/admin/testimonials", icon: MessageSquare, label: "Testimonials" },
   { to: "/admin/business-config", icon: Building2, label: "Business Config" },
@@ -69,7 +70,7 @@ export const AdminLayout = () => {
         ) : (
           <button
             onClick={() => setCollapsed((p) => !p)}
-            className="p-1.5 rounded-lg hover:bg-purple-600 transition shrink-0"
+            className="p-1.5 rounded-lg hover:bg-amber-700/50 transition shrink-0"
           >
             {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
@@ -175,7 +176,15 @@ export const AdminLayout = () => {
             <span className="ml-2 inline-block px-2 py-0.5 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 text-[10px] sm:text-xs rounded-full capitalize font-medium">
               {user?.role}
             </span>
-          </p>
+            <div className="h-8 w-px bg-border" />
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-amber/10 flex items-center justify-center">
+                <span className="text-amber font-display font-semibold text-sm">
+                  {user?.fullName?.charAt(0) || "A"}
+                </span>
+              </div>
+            </div>
+          </div>
         </header>
 
         {/* Core content wrapper viewport */}
