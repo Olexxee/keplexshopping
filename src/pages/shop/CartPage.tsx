@@ -65,10 +65,7 @@ export const CartPage = () => {
     if (next < 1) return;
 
     updateItem(
-      {
-        itemId, quantity: next,
-        cartItemId: ""
-      },
+      { itemId, quantity: next },
       {
         onError: (err) => alert(getErrorMessage(err)),
       },
