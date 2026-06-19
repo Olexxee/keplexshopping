@@ -20,6 +20,8 @@ import { getErrorMessage } from "../../utils/error";
 
 export const StoreHeader = () => {
   const { data: user } = useMe();
+  const { data: cart } = useCart();
+  const cartCount = cart?.totalItems ?? 0;
   const { mutate: logout, isPending: loggingOut } = useLogout();
   const { data: cart } = useCart();
   
@@ -38,7 +40,9 @@ export const StoreHeader = () => {
 
   const cartCount = cart?.totalItems ?? 0;
 
-  // Close dropdowns on outside click
+  const badgeCount = cartCount > 99 ? "99+" : cartCount.toString();
+
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -152,7 +156,7 @@ export const StoreHeader = () => {
             {/* Logo - Left */}
             <Link to="/" className="flex items-center gap-3 group shrink-0">
               <div className="h-9 w-9 rounded-lg bg-gradient-amber flex items-center justify-center shadow-amber group-hover:shadow-glow transition-all duration-300">
-                <span className="text-white font-display font-bold text-lg group-hover:scale-110 transition-transform duration-300">
+                <span className="text-white font-display font-bold text-lg">
                   K
                 </span>
               </div>
@@ -166,50 +170,20 @@ export const StoreHeader = () => {
               </div>
             </Link>
 
-            {/* Navigation - Center */}
-            <nav className="hidden md:flex items-center gap-8">
-              <NavLink 
-                to="/shop" 
-                className={({ isActive }) => 
-                  `font-medium transition-all duration-200 ${
-                    isActive 
-                      ? "text-amber border-b-2 border-amber pb-1" 
-                      : "text-foreground hover:text-amber hover:border-b-2 hover:border-amber/50 pb-1"
-                  }`
-                }
-              >
-                Shop
-              </NavLink>
-              <NavLink 
-                to="/cart" 
-                className={({ isActive }) => 
-                  `font-medium transition-all duration-200 ${
-                    isActive 
-                      ? "text-amber border-b-2 border-amber pb-1" 
-                      : "text-foreground hover:text-amber hover:border-b-2 hover:border-amber/50 pb-1"
-                  }`
-                }
-              >
-                Cart
-              </NavLink>
-              <NavLink 
-                to="/orders" 
-                className={({ isActive }) => 
-                  `font-medium transition-all duration-200 ${
-                    isActive 
-                      ? "text-amber border-b-2 border-amber pb-1" 
-                      : "text-foreground hover:text-amber hover:border-b-2 hover:border-amber/50 pb-1"
-                  }`
-                }
-              >
-                Orders
-              </NavLink>
-            </nav>
-
-            {/* Right Actions */}
-            <div className="flex items-center gap-3">
-              {/* Notification Bell */}
-              <div className="relative hidden md:block" ref={notificationRef}>
+            {/* Search Bar - Desktop (Centered) */}
+            <form
+              onSubmit={handleSearch}
+              className="hidden md:flex flex-1 max-w-xl mx-8"
+            >
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="w-full px-4 py-2.5 pl-11 rounded-full border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent transition-all"
+                />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <button
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
                   className="relative p-2 rounded-lg hover:bg-muted transition-colors"
@@ -320,11 +294,17 @@ export const StoreHeader = () => {
               </div>
 
               {/* Cart Icon */}
-              <Link to="/cart" className="relative group p-2 rounded-lg hover:bg-muted transition-colors">
-                <ShoppingCart size={22} className="text-foreground group-hover:text-amber transition-colors duration-200" />
+              <Link
+                to="/cart"
+                className="relative group p-2 rounded-lg hover:bg-muted transition-colors"
+              >
+                <ShoppingCart
+                  size={22}
+                  className="text-foreground group-hover:text-amber transition-colors duration-200"
+                />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-amber text-white text-[10px] flex items-center justify-center font-medium shadow-amber animate-zoom-in">
-                    {cartCount > 99 ? "99+" : cartCount}
+                  <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-amber text-white text-[10px] flex items-center justify-center font-medium shadow-amber">
+                    {badgeCount}
                   </span>
                 )}
               </Link>
@@ -504,20 +484,13 @@ export const StoreHeader = () => {
               {/* Mobile User Section */}
               {user ? (
                 <>
-                  <div className="px-4 py-3 mb-2 bg-gradient-subtle rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gradient-amber flex items-center justify-center">
-                        <span className="text-white font-display font-bold">
-                          {user.fullName?.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="font-display font-semibold text-foreground">
-                          {user.fullName}
-                        </p>
-                        <p className="text-xs text-muted-foreground">{user.email}</p>
-                      </div>
-                    </div>
+                  <div className="px-4 py-3 mb-2">
+                    <p className="font-display font-semibold text-foreground">
+                      {user.fullName}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {user.email}
+                    </p>
                   </div>
                   
                   <Link

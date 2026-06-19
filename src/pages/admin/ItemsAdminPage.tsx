@@ -114,6 +114,23 @@ export const ItemsAdminPage = () => {
       ),
     },
     {
+      key: "stock",
+      header: "Stock",
+      render: (row: CatalogItem) => {
+        // Checking if item is a SERVICE to display appropriate label
+        if (row.itemType === "SERVICE") {
+          return <span className="text-gray-400 text-sm">—</span>;
+        }
+        return (
+          <span
+            className={`text-sm font-medium ${Number(row.stock) === 0 ? "text-red-500 font-semibold" : "text-gray-700"}`}
+          >
+            {row.stock ?? 0}
+          </span>
+        );
+      },
+    },
+    {
       key: "status",
       header: "Status",
       render: (row: CatalogItem) => <StatusBadge status={row.status} />,
@@ -123,11 +140,10 @@ export const ItemsAdminPage = () => {
       header: "",
       render: (row: CatalogItem) => (
         <div className="flex items-center gap-2 justify-end">
-          <Button variant="secondary" size="sm" onClick={() => openEdit(row)}>
+          <Button size="sm" onClick={() => openEdit(row)}>
             Edit
           </Button>
           <Button
-            variant="danger"
             size="sm"
             onClick={() => setDeleteTarget(row)}
           >
@@ -230,11 +246,24 @@ export const ItemsAdminPage = () => {
               />
             </div>
 
-            {/* Type */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">
-                Type <span className="text-destructive">*</span>
+            {/* Added Stock Input Field */}
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">
+                Stock Quantity
               </label>
+              <input
+                name="stock"
+                type="number"
+                min="0"
+                step="1"
+                defaultValue={editTarget ? ((editTarget as any).stock ?? 0) : 0}
+                required
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Type</label>
               <select
                 name="itemType"
                 defaultValue={editTarget?.itemType ?? "PRODUCT"}
@@ -264,10 +293,9 @@ export const ItemsAdminPage = () => {
               </select>
             </div>
 
-            {/* Status */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">
-                Status <span className="text-destructive">*</span>
+            <div className="col-span-2 space-y-1">
+              <label className="text-sm font-medium text-gray-700">
+                Status
               </label>
               <select
                 name="status"

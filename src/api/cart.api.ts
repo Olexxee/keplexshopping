@@ -18,11 +18,22 @@ export const addCartItem = async (
   return res.data.data;
 };
 
+// export const updateCartItem = async (
+//   itemId: string,
+//   payload: { quantity: number },
+// ): Promise<Cart> => {
+//   const res = await api.patch(`/cart/items/${itemId}`, payload);
+//   return res.data.data;
+// };
+
 export const updateCartItem = async (
   itemId: string,
   payload: { quantity: number },
 ): Promise<Cart> => {
+  console.log("API CALL", itemId, payload);
+
   const res = await api.patch(`/cart/items/${itemId}`, payload);
+
   return res.data.data;
 };
 

@@ -1,29 +1,29 @@
 import { useEffect, useState } from "react";
+import { ImagePlus, X, Loader2 } from "lucide-react";
 import {
   useCreateTraining,
   useUpdateTraining,
   useUploadTrainingMedia,
 } from "../../hooks/useTrainingPrograms";
-import { Card } from "../ui/Card";
-import { Button } from "../ui/Button";
-import { 
-  X, 
-  Save, 
-  Image, 
-  FileText, 
-  DollarSign, 
-  Hash, 
-  CheckCircle, 
-  Star,
-  AlertCircle,
-  Loader2
-} from "lucide-react";
+import { compressImage } from "../../utils/compressImage";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   training?: any;
 }
+
+const defaultForm = {
+  title: "",
+  slug: "",
+  shortDescription: "",
+  description: "",
+  price: 0,
+  active: true,
+  featured: false,
+  displayOrder: 0,
+  highlights: "",
+};
 
 export const TrainingFormModal = ({ open, onClose, training }: Props) => {
   const isEdit = !!training;
@@ -32,38 +32,26 @@ export const TrainingFormModal = ({ open, onClose, training }: Props) => {
   const updateMutation = useUpdateTraining();
   const uploadMedia = useUploadTrainingMedia();
 
+  const [form, setForm] = useState(defaultForm);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [formError, setFormError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [compressing, setCompressing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [form, setForm] = useState({
-    title: "",
-    slug: "",
-    shortDescription: "",
-    description: "",
-    price: 0,
-    active: true,
-    featured: false,
-    displayOrder: 0,
-    highlights: "",
-  });
+  const isSaving =
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    uploadMedia.isPending ||
+    compressing;
 
   useEffect(() => {
+    if (!open) return;
+
     if (!training) {
-      setForm({
-        title: "",
-        slug: "",
-        shortDescription: "",
-        description: "",
-        price: 0,
-        active: true,
-        featured: false,
-        displayOrder: 0,
-        highlights: "",
-      });
-      setImagePreview(null);
+      setForm(defaultForm);
       setImageFile(null);
+      setImagePreview(null);
+      setError(null);
       return;
     }
 
@@ -73,16 +61,39 @@ export const TrainingFormModal = ({ open, onClose, training }: Props) => {
       shortDescription: training.shortDescription || "",
       description: training.description || "",
       price: Number(training.price || 0),
-      active: training.active !== undefined ? training.active : true,
-      featured: training.featured || false,
+      active: training.active ?? true,
+      featured: training.featured ?? false,
       displayOrder: training.displayOrder || 0,
       highlights: (training.highlights || []).join("\n"),
     });
 
-    if (training.image) {
-      setImagePreview(training.image);
+    // Show existing image as preview
+    const existingImage = training.media?.find((m: any) => m.isPrimary)?.url
+      || training.media?.[0]?.url
+      || null;
+    setImagePreview(existingImage);
+    setImageFile(null);
+    setError(null);
+  }, [training, open]);
+
+  const handleFile = async (file: File) => {
+    // Show preview immediately
+    setImagePreview(URL.createObjectURL(file));
+
+    try {
+      setCompressing(true);
+      const compressed = await compressImage(file);
+      setImageFile(compressed);
+    } catch {
+      setImageFile(file); // fallback to original
+    } finally {
+      setCompressing(false);
     }
-  }, [training]);
+  };
+
+  const set = (field: string) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => setForm((p) => ({ ...p, [field]: e.target.value }));
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -98,64 +109,37 @@ export const TrainingFormModal = ({ open, onClose, training }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormError("");
-    setIsSubmitting(true);
+    setError(null);
+
+    const payload = {
+      ...form,
+      price: Number(form.price),
+      highlights: form.highlights
+        .split("\n")
+        .map((x) => x.trim())
+        .filter(Boolean),
+    };
 
     try {
-      // Validate required fields
-      if (!form.title.trim()) {
-        setFormError("Title is required");
-        setIsSubmitting(false);
-        return;
-      }
-      if (!form.slug.trim()) {
-        setFormError("Slug is required");
-        setIsSubmitting(false);
-        return;
-      }
-      if (!form.shortDescription.trim()) {
-        setFormError("Short description is required");
-        setIsSubmitting(false);
-        return;
-      }
-
-      const payload = {
-        ...form,
-        highlights: form.highlights
-          .split("\n")
-          .map((x) => x.trim())
-          .filter(Boolean),
-        price: Number(form.price) || 0,
-      };
-
       let programId = training?.id;
 
-      // 1. Create or update
       if (isEdit) {
-        await updateMutation.mutateAsync({
-          id: programId,
-          data: payload,
-        });
+        await updateMutation.mutateAsync({ id: programId, data: payload });
       } else {
         const res = await createMutation.mutateAsync(payload);
-        programId = res.data.data.id;
+        programId = res?.data?.data?.id || res?.data?.id;
       }
 
-      // 2. Upload image if exists
       if (imageFile && programId) {
         const formData = new FormData();
-        formData.append("file", imageFile);
-        await uploadMedia.mutateAsync({
-          id: programId,
-          data: formData,
-        });
+        formData.append("image", imageFile);
+        await uploadMedia.mutateAsync({ id: programId, data: formData });
       }
 
       onClose();
-    } catch (error: any) {
-      setFormError(error?.message || "Failed to save training program");
-    } finally {
-      setIsSubmitting(false);
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || "Something went wrong. Please try again.";
+      setError(msg);
     }
   };
 
@@ -164,293 +148,212 @@ export const TrainingFormModal = ({ open, onClose, training }: Props) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-card rounded-xl border border-border shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl">
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border bg-gradient-subtle">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-amber/10 flex items-center justify-center">
-              <FileText size={20} className="text-amber" />
-            </div>
-            <div>
-              <h2 className="font-display text-display-sm text-foreground">
-                {isEdit ? "Edit Training Program" : "Create Training Program"}
-              </h2>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                {isEdit ? "Update program details" : "Add a new training program"}
-              </p>
-            </div>
-          </div>
+        <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10">
+          <h2 className="text-lg font-bold text-neutral-900">
+            {isEdit ? "Edit Program" : "New Training Program"}
+          </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-            disabled={isLoading}
+            disabled={isSaving}
+            className="p-2 rounded-lg hover:bg-neutral-100 transition-colors disabled:opacity-40"
           >
-            <X size={20} />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto max-h-[calc(90vh-180px)] space-y-5">
-          {/* Error */}
-          {formError && (
-            <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg px-4 py-3 flex items-center gap-2">
-              <AlertCircle size={16} />
-              {formError}
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+
+          {/* Error banner */}
+          {error && (
+            <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+              {error}
             </div>
           )}
 
-          {/* Title */}
+          {/* Cover image */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
-              <FileText size={14} className="text-amber" />
-              Title <span className="text-destructive">*</span>
+            <label className="text-sm font-medium text-neutral-700">
+              Cover Image
             </label>
-            <input
-              placeholder="Enter program title"
-              value={form.title}
-              onChange={(e) =>
-                setForm((p) => ({
-                  ...p,
-                  title: e.target.value,
-                }))
-              }
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
-              required
-            />
-          </div>
 
-          {/* Slug */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
-              <Hash size={14} className="text-amber" />
-              Slug <span className="text-destructive">*</span>
-            </label>
-            <input
-              placeholder="program-slug"
-              value={form.slug}
-              onChange={(e) =>
-                setForm((p) => ({
-                  ...p,
-                  slug: e.target.value.toLowerCase().replace(/\s+/g, "-"),
-                }))
-              }
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
-              required
-            />
-            <p className="text-xs text-muted-foreground">
-              URL-friendly identifier (auto-converts spaces to hyphens)
-            </p>
-          </div>
-
-          {/* Short Description */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
-              <FileText size={14} className="text-amber" />
-              Short Description <span className="text-destructive">*</span>
-            </label>
-            <textarea
-              placeholder="Brief description of the program"
-              value={form.shortDescription}
-              onChange={(e) =>
-                setForm((p) => ({
-                  ...p,
-                  shortDescription: e.target.value,
-                }))
-              }
-              rows={2}
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200 resize-y"
-              required
-            />
-          </div>
-
-          {/* Full Description */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
-              <FileText size={14} className="text-amber" />
-              Full Description
-            </label>
-            <textarea
-              rows={4}
-              placeholder="Detailed description of the program"
-              value={form.description}
-              onChange={(e) =>
-                setForm((p) => ({
-                  ...p,
-                  description: e.target.value,
-                }))
-              }
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200 resize-y"
-            />
-          </div>
-
-          {/* Price */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
-              <DollarSign size={14} className="text-amber" />
-              Price (₦)
-            </label>
-            <input
-              type="number"
-              placeholder="0.00"
-              value={form.price}
-              onChange={(e) =>
-                setForm((p) => ({
-                  ...p,
-                  price: Number(e.target.value) || 0,
-                }))
-              }
-              min="0"
-              step="0.01"
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
-            />
-          </div>
-
-          {/* Image Upload */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
-              <Image size={14} className="text-amber" />
-              Program Image
-            </label>
-            <div className="flex items-center gap-4">
-              {imagePreview && (
-                <div className="h-20 w-20 rounded-lg overflow-hidden border border-border shrink-0">
+            <label className={[
+              "relative flex flex-col items-center justify-center w-full h-44 rounded-xl border-2 border-dashed cursor-pointer transition-colors overflow-hidden",
+              imagePreview ? "border-transparent" : "border-neutral-200 hover:border-pink-300 bg-neutral-50",
+            ].join(" ")}>
+              {imagePreview ? (
+                <>
                   <img
                     src={imagePreview}
                     alt="Preview"
                     className="w-full h-full object-cover"
                   />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                    <span className="text-white text-sm font-medium">Change Image</span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-neutral-400">
+                  {compressing ? (
+                    <>
+                      <Loader2 className="w-6 h-6 animate-spin text-pink-400" />
+                      <span className="text-xs">Compressing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ImagePlus className="w-6 h-6" />
+                      <span className="text-xs">Click to upload image</span>
+                      <span className="text-xs text-neutral-300">JPEG, PNG, WEBP · Max 10MB</span>
+                    </>
+                  )}
                 </div>
               )}
-              <div className="flex-1">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-amber file:text-white hover:file:bg-amber-light file:cursor-pointer"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Recommended: 1200x800px, max 5MB
-                </p>
-              </div>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="sr-only"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFile(file);
+                }}
+              />
+            </label>
+          </div>
+
+          {/* Title */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-neutral-700">Title</label>
+            <input
+              required
+              value={form.title}
+              onChange={set("title")}
+              placeholder="e.g. Resin Art Masterclass"
+              className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 transition-colors"
+            />
+          </div>
+
+          {/* Slug */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-neutral-700">Slug</label>
+            <input
+              required
+              value={form.slug}
+              onChange={set("slug")}
+              placeholder="e.g. resin-art-masterclass"
+              className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 transition-colors font-mono"
+            />
+          </div>
+
+          {/* Short description */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-neutral-700">Short Description</label>
+            <textarea
+              rows={2}
+              value={form.shortDescription}
+              onChange={set("shortDescription")}
+              placeholder="One-line summary shown on cards"
+              className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 transition-colors resize-none"
+            />
+          </div>
+
+          {/* Full description */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-neutral-700">Full Description</label>
+            <textarea
+              rows={5}
+              value={form.description}
+              onChange={set("description")}
+              placeholder="Detailed program description"
+              className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 transition-colors resize-none"
+            />
+          </div>
+
+          {/* Price + Display order */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-neutral-700">Price (₦)</label>
+              <input
+                type="number"
+                min={0}
+                value={form.price}
+                onChange={(e) => setForm((p) => ({ ...p, price: Number(e.target.value) }))}
+                className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 transition-colors"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-neutral-700">Display Order</label>
+              <input
+                type="number"
+                min={0}
+                value={form.displayOrder}
+                onChange={(e) => setForm((p) => ({ ...p, displayOrder: Number(e.target.value) }))}
+                className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 transition-colors"
+              />
             </div>
           </div>
 
           {/* Highlights */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
-              <Star size={14} className="text-amber" />
-              Highlights
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-neutral-700">
+              Highlights <span className="text-neutral-400 font-normal">(one per line)</span>
             </label>
             <textarea
               rows={4}
-              placeholder="Enter each highlight on a new line"
               value={form.highlights}
-              onChange={(e) =>
-                setForm((p) => ({
-                  ...p,
-                  highlights: e.target.value,
-                }))
-              }
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200 resize-y"
+              onChange={set("highlights")}
+              placeholder={"Learn resin basics\nCreate keychains\nLaunch your brand"}
+              className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 transition-colors resize-none"
             />
-            <p className="text-xs text-muted-foreground">
-              One highlight per line. These will be displayed as bullet points.
-            </p>
-          </div>
-
-          {/* Display Order */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
-              <Hash size={14} className="text-amber" />
-              Display Order
-            </label>
-            <input
-              type="number"
-              placeholder="0"
-              value={form.displayOrder}
-              onChange={(e) =>
-                setForm((p) => ({
-                  ...p,
-                  displayOrder: Number(e.target.value) || 0,
-                }))
-              }
-              min="0"
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground text-sm outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all duration-200"
-            />
-            <p className="text-xs text-muted-foreground">
-              Lower numbers appear first
-            </p>
           </div>
 
           {/* Toggles */}
-          <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-muted/20 border border-border">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={form.active}
-                onChange={() =>
-                  setForm((p) => ({
-                    ...p,
-                    active: !p.active,
-                  }))
-                }
-                className="h-4 w-4 rounded border-input text-amber focus:ring-amber focus:ring-offset-0"
-              />
-              <div>
-                <span className="text-sm font-medium text-foreground">Active</span>
-                <p className="text-xs text-muted-foreground">Program is visible</p>
-              </div>
-            </label>
-
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={form.featured}
-                onChange={() =>
-                  setForm((p) => ({
-                    ...p,
-                    featured: !p.featured,
-                  }))
-                }
-                className="h-4 w-4 rounded border-input text-amber focus:ring-amber focus:ring-offset-0"
-              />
-              <div>
-                <span className="text-sm font-medium text-foreground">Featured</span>
-                <p className="text-xs text-muted-foreground">Highlighted program</p>
-              </div>
-            </label>
+          <div className="flex gap-6 pt-1">
+            {[
+              { label: "Active", field: "active" },
+              { label: "Featured", field: "featured" },
+            ].map(({ label, field }) => (
+              <label key={field} className="flex items-center gap-2 cursor-pointer select-none">
+                <div
+                  onClick={() => setForm((p) => ({ ...p, [field]: !p[field as keyof typeof p] }))}
+                  className={[
+                    "w-9 h-5 rounded-full transition-colors relative",
+                    form[field as keyof typeof form] ? "bg-pink-500" : "bg-neutral-200",
+                  ].join(" ")}
+                >
+                  <div className={[
+                    "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform",
+                    form[field as keyof typeof form] ? "translate-x-4" : "translate-x-0.5",
+                  ].join(" ")} />
+                </div>
+                <span className="text-sm text-neutral-700">{label}</span>
+              </label>
+            ))}
           </div>
 
-          {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-border">
-            <Button
+          {/* Footer */}
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <button
               type="button"
               variant="ghost"
               onClick={onClose}
-              disabled={isLoading}
+              disabled={isSaving}
+              className="px-5 py-2.5 rounded-xl border border-neutral-200 text-sm font-medium hover:bg-neutral-50 disabled:opacity-40 transition-colors"
             >
               Cancel
-            </Button>
-
-            <Button
+            </button>
+            <button
               type="submit"
-              disabled={isLoading}
-              className="gap-2"
+              disabled={isSaving}
+              className="px-5 py-2.5 rounded-xl bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-700 disabled:opacity-40 transition-colors flex items-center gap-2"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  {isEdit ? "Saving..." : "Creating..."}
-                </>
-              ) : (
-                <>
-                  <Save size={16} />
-                  {isEdit ? "Save Changes" : "Create Program"}
-                </>
-              )}
-            </Button>
+              {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              {isSaving ? "Saving..." : isEdit ? "Save Changes" : "Create Program"}
+            </button>
           </div>
+
         </form>
       </div>
     </div>

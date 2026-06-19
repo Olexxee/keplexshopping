@@ -5,7 +5,6 @@ export const getTrainings = () => {
   return api.get("/training-programs");
 };
 
-
 // GET TRAINING BY ID
 export const getTrainingById = (id: any) => {
   return api.get(`/training-programs/${id}`);
@@ -34,7 +33,5 @@ export const toggleFeaturedTraining = (id: string, featured: boolean) => {
 };
 
 export const uploadTrainingMedia = (id: string, data: FormData) => {
-  return api.post(`/training-programs/${id}/media`, data, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-};
+  return api.post(`/training-programs/${id}/media`, data);
+};  

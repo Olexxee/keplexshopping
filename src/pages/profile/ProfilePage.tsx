@@ -100,8 +100,8 @@ export const ProfilePage = () => {
             </span>
           </div>
 
-          <div className="bg-card rounded-xl border border-border shadow-md overflow-hidden divide-y divide-border">
-            {menuItems.map((item) => (
+          <div className="bg-card rounded-xl border border-border shadow-md overflow-hidden">
+            {menuItems.map((item, _index) => (
               <AccountMenuItem 
                 key={item.title} 
                 {...item} 
