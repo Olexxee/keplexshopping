@@ -3,16 +3,33 @@ import { Link, NavLink } from "react-router-dom";
 import { 
   ShoppingCart, User, LogOut, UserCircle, Menu, X, 
   Heart, LayoutDashboard, Settings, Bell, Shield, Award,
-  Package, MapPin, CreditCard
+  Package, MapPin, CreditCard, CheckCircle, XCircle,
+  AlertCircle, Loader2
 } from "lucide-react";
 import { useMe } from "../../hooks/useAuth";
 import { useLogout } from "../../hooks/useAuth";
 import { useCart } from "../../hooks/useCart";
+import { 
+  useNotifications, 
+  useUnreadNotifications,  // Changed from useUnreadCount
+  useMarkNotificationRead,
+  useMarkAllNotificationsRead,
+  useDeleteNotification
+} from "../../hooks/useNotifications";
+import { getErrorMessage } from "../../utils/error";
 
 export const StoreHeader = () => {
   const { data: user } = useMe();
   const { mutate: logout, isPending: loggingOut } = useLogout();
   const { data: cart } = useCart();
+  
+  // Notification hooks - use the correct names
+  const { data: notifications = [], isLoading: notificationsLoading } = useNotifications();
+  const { data: unreadCount = 0, refetch: refetchUnread } = useUnreadNotifications(); // Changed from useUnreadCount
+  const { mutate: markRead, isPending: markingRead } = useMarkNotificationRead();
+  const { mutate: markAllRead, isPending: markingAllRead } = useMarkAllNotificationsRead();
+  const { mutate: deleteNotif, isPending: deletingNotif } = useDeleteNotification();
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -20,15 +37,6 @@ export const StoreHeader = () => {
   const notificationRef = useRef<HTMLDivElement>(null);
 
   const cartCount = cart?.totalItems ?? 0;
-  
-  // Mock notifications - replace with real data from API
-  const notifications = [
-    { id: 1, title: "Order Delivered", message: "Your order #ORD-1234 has been delivered", time: "2 hours ago", read: false, type: "success" },
-    { id: 2, title: "Payment Received", message: "Payment of ₦25,000 received", time: "Yesterday", read: false, type: "info" },
-    { id: 3, title: "Flash Sale!", message: "50% off on selected items", time: "2 days ago", read: true, type: "promo" },
-  ];
-  
-  const unreadCount = notifications.filter(n => !n.read).length;
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -44,13 +52,96 @@ export const StoreHeader = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Refetch unread count when notifications are opened
+  useEffect(() => {
+    if (notificationsOpen) {
+      refetchUnread();
+    }
+  }, [notificationsOpen, refetchUnread]);
+
   const getNotificationIcon = (type: string) => {
     switch(type) {
-      case "success": return <Award size={14} className="text-green-500" />;
-      case "info": return <CreditCard size={14} className="text-blue-500" />;
-      case "promo": return <Shield size={14} className="text-amber" />;
-      default: return <Package size={14} className="text-muted-foreground" />;
+      case "success":
+      case "order_delivered":
+      case "payment_received":
+        return <CheckCircle size={14} className="text-green-500" />;
+      case "info":
+        return <AlertCircle size={14} className="text-blue-500" />;
+      case "promo":
+      case "flash_sale":
+        return <Shield size={14} className="text-amber" />;
+      case "warning":
+        return <AlertCircle size={14} className="text-orange-500" />;
+      case "error":
+        return <XCircle size={14} className="text-red-500" />;
+      default:
+        return <Bell size={14} className="text-muted-foreground" />;
     }
+  };
+
+  const getNotificationColor = (type: string) => {
+    switch(type) {
+      case "success":
+      case "order_delivered":
+      case "payment_received":
+        return "bg-green-500/10";
+      case "info":
+        return "bg-blue-500/10";
+      case "promo":
+      case "flash_sale":
+        return "bg-amber/10";
+      case "warning":
+        return "bg-orange-500/10";
+      case "error":
+        return "bg-red-500/10";
+      default:
+        return "bg-muted/30";
+    }
+  };
+
+  const handleMarkRead = (id: string) => {
+    markRead(id, {
+      onSuccess: () => {
+        refetchUnread();
+      },
+      onError: (err) => {
+        console.error("Failed to mark notification as read:", err);
+      }
+    });
+  };
+
+  const handleMarkAllRead = () => {
+    markAllRead(undefined, {
+      onSuccess: () => {
+        refetchUnread();
+      },
+      onError: (err) => {
+        console.error("Failed to mark all notifications as read:", err);
+      }
+    });
+  };
+
+  const handleDeleteNotification = (id: string) => {
+    deleteNotif(id, {
+      onSuccess: () => {
+        refetchUnread();
+      },
+      onError: (err) => {
+        console.error("Failed to delete notification:", err);
+      }
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diff < 60) return `${diff} seconds ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
+    return date.toLocaleDateString();
   };
 
   return (
@@ -59,7 +150,7 @@ export const StoreHeader = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between gap-4 h-16">
             {/* Logo - Left */}
-            <Link to="/shop" className="flex items-center gap-3 group shrink-0">
+            <Link to="/" className="flex items-center gap-3 group shrink-0">
               <div className="h-9 w-9 rounded-lg bg-gradient-amber flex items-center justify-center shadow-amber group-hover:shadow-glow transition-all duration-300">
                 <span className="text-white font-display font-bold text-lg group-hover:scale-110 transition-transform duration-300">
                   K
@@ -133,34 +224,52 @@ export const StoreHeader = () => {
                 </button>
 
                 {notificationsOpen && (
-                  <div className="absolute right-0 mt-2 w-80 bg-card border border-border rounded-xl shadow-lg z-50 animate-zoom-in overflow-hidden">
+                  <div className="absolute right-0 mt-2 w-80 max-h-[500px] bg-card border border-border rounded-xl shadow-lg z-50 animate-zoom-in overflow-hidden">
                     <div className="p-4 border-b border-border bg-gradient-subtle">
                       <div className="flex items-center justify-between">
                         <h3 className="font-display font-semibold text-foreground">Notifications</h3>
                         {unreadCount > 0 && (
-                          <button className="text-xs text-amber hover:text-amber-light transition-colors">
+                          <button 
+                            onClick={handleMarkAllRead}
+                            disabled={markingAllRead}
+                            className="text-xs text-amber hover:text-amber-light transition-colors disabled:opacity-50 flex items-center gap-1"
+                          >
+                            {markingAllRead ? (
+                              <Loader2 size={12} className="animate-spin" />
+                            ) : null}
                             Mark all as read
                           </button>
                         )}
                       </div>
                     </div>
                     
-                    <div className="max-h-96 overflow-y-auto">
-                      {notifications.length === 0 ? (
+                    <div className="max-h-[350px] overflow-y-auto">
+                      {notificationsLoading ? (
+                        <div className="p-8 text-center">
+                          <Loader2 size={32} className="mx-auto text-amber animate-spin mb-3" />
+                          <p className="text-sm text-muted-foreground">Loading notifications...</p>
+                        </div>
+                      ) : notifications.length === 0 ? (
                         <div className="p-8 text-center">
                           <Bell size={32} className="mx-auto text-muted-foreground mb-3" />
                           <p className="text-sm text-muted-foreground">No notifications yet</p>
+                          <p className="text-xs text-muted-foreground mt-1">We'll notify you when something happens</p>
                         </div>
                       ) : (
-                        notifications.map((notif) => (
+                        notifications.map((notif: any) => (
                           <div
                             key={notif.id}
-                            className={`p-4 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer ${
+                            className={`p-4 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group ${
                               !notif.read ? "bg-amber/5" : ""
                             }`}
+                            onClick={() => {
+                              if (!notif.read) {
+                                handleMarkRead(notif.id);
+                              }
+                            }}
                           >
                             <div className="flex items-start gap-3">
-                              <div className="h-8 w-8 rounded-full bg-amber/10 flex items-center justify-center shrink-0">
+                              <div className={`h-8 w-8 rounded-full ${getNotificationColor(notif.type)} flex items-center justify-center shrink-0`}>
                                 {getNotificationIcon(notif.type)}
                               </div>
                               <div className="flex-1 min-w-0">
@@ -169,15 +278,27 @@ export const StoreHeader = () => {
                                     {notif.title}
                                   </p>
                                   {!notif.read && (
-                                    <span className="h-2 w-2 rounded-full bg-amber" />
+                                    <span className="h-2 w-2 rounded-full bg-amber shrink-0" />
                                   )}
                                 </div>
                                 <p className="text-xs text-muted-foreground">
                                   {notif.message}
                                 </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {notif.time}
-                                </p>
+                                <div className="flex items-center justify-between mt-1.5">
+                                  <p className="text-xs text-muted-foreground">
+                                    {formatTime(notif.createdAt)}
+                                  </p>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteNotification(notif.id);
+                                    }}
+                                    disabled={deletingNotif}
+                                    className="text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                                  >
+                                    <XCircle size={14} />
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
