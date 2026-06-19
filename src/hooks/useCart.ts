@@ -8,6 +8,11 @@ import {
 } from "../api/cart.api";
 import type { AddCartItemPayload } from "../api/cart.api";
 
+type UpdateCartItemPayload = {
+  itemId: string;
+  quantity: number;
+};
+
 export const CART_KEY = ["cart"] as const; // exported so useCheckout can import it
 
 export const useCart = () =>
@@ -33,9 +38,15 @@ export const useAddToCart = () => {
 
 export const useUpdateCartItem = () => {
   const updateCache = useCartCacheUpdater();
+
   return useMutation({
-    mutationFn: ({ itemId, quantity }: { itemId: string; quantity: number }) =>
-      updateCartItem(itemId, { quantity }),
+    mutationFn: (payload: UpdateCartItemPayload) => {
+      console.log("MUTATION PAYLOAD", payload);
+
+      return updateCartItem(payload.itemId, {
+        quantity: payload.quantity,
+      });
+    },
     onSuccess: updateCache,
   });
 };
@@ -43,10 +54,11 @@ export const useUpdateCartItem = () => {
 export const useRemoveCartItem = () => {
   const updateCache = useCartCacheUpdater();
   return useMutation({
-    mutationFn: (itemId: string) => removeCartItem(itemId),
+    mutationFn: (cartItemId: string) => removeCartItem(cartItemId),
     onSuccess: updateCache,
   });
 };
+
 
 export const useClearCart = () => {
   const updateCache = useCartCacheUpdater();

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Trash2, Minus, Plus, ShoppingCart, ArrowRight } from "lucide-react";
+import { Minus, Plus, ShoppingCart, ArrowRight } from "lucide-react";
 
 import {
   useCart,
@@ -48,20 +48,30 @@ export const CartPage = () => {
     variables: updateVars,
   } = useUpdateCartItem();
   const {
-    mutate: removeItem,
     isPending: removePending,
-    variables: removeVars,
   } = useRemoveCartItem();
   const { mutate: clearCart, isPending: clearPending } = useClearCart();
 
   const items = cart?.items ?? [];
+
+  console.log(items)
+
   const actionLoading = updatePending || removePending || clearPending;
+  const hasCheckoutIssues = items.some((item) => !item.inStock || item.unavailable);
 
   const handleQuantityChange = (itemId: string, next: number) => {
+    console.log("HANDLE", itemId, next);
+
     if (next < 1) return;
+
     updateItem(
-      { itemId, quantity: next },
-      { onError: (err) => alert(getErrorMessage(err)) },
+      {
+        itemId, quantity: next,
+        cartItemId: ""
+      },
+      {
+        onError: (err) => alert(getErrorMessage(err)),
+      },
     );
   };
 
@@ -73,6 +83,19 @@ export const CartPage = () => {
       </div>
     );
   }
+
+  {hasCheckoutIssues ? (
+  <Button size="lg" fullWidth disabled>
+    Resolve cart issues first
+  </Button>
+) : (
+  <Link to="/checkout">
+    <Button size="lg" fullWidth className="gap-2">
+      Proceed to Checkout
+      <ArrowRight size={18} />
+    </Button>
+  </Link>
+)}
 
   return (
     <div className="space-y-8 py-8">
@@ -133,15 +156,9 @@ export const CartPage = () => {
               const image = cartItem.item?.media?.[0]?.url;
               const isUpdatingThis =
                 updatePending && updateVars?.itemId === cartItem.itemId;
-              const isRemovingThis =
-                removePending && removeVars === cartItem.itemId;
 
               return (
-                <Card
-                  key={cartItem.id}
-                  hoverable
-                  className="p-5 flex gap-5"
-                >
+                <Card key={cartItem.id} hoverable className="p-5 flex gap-5">
                   <div className="w-32 h-32 rounded-lg bg-muted/30 overflow-hidden shrink-0 ring-1 ring-border">
                     {image ? (
                       <img
@@ -155,7 +172,17 @@ export const CartPage = () => {
                       </div>
                     )}
                   </div>
+                  {!cartItem.inStock && (
+                    <p className="mt-2 text-sm text-destructive font-medium">
+                      Only {cartItem.availableStock} left in stock.
+                    </p>
+                  )}
 
+                  {cartItem.unavailable && (
+                    <p className="mt-2 text-sm text-destructive font-medium">
+                      This item is no longer available.
+                    </p>
+                  )}
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div className="flex justify-between gap-4">
                       <div className="min-w-0">
@@ -165,22 +192,28 @@ export const CartPage = () => {
                           </h2>
                         </Link>
                         <p className="text-sm text-amber font-semibold mt-1">
-                          ₦{Number(cartItem.unitPriceSnapshot).toLocaleString()}{" "}
-                          <span className="text-muted-foreground font-normal">each</span>
+                          ₦{cartItem.unitPrice.toLocaleString()}{" "}
+                          <span className="text-muted-foreground font-normal">
+                            each
+                          </span>
                         </p>
                       </div>
 
                       <button
                         onClick={() =>
-                          removeItem(cartItem.itemId, {
-                            onError: (err) => alert(getErrorMessage(err)),
-                          })
+                          handleQuantityChange(
+                            cartItem.itemId,
+                            cartItem.quantity + 1,
+                          )
                         }
-                        disabled={isRemovingThis || actionLoading}
-                        className="text-muted-foreground hover:text-destructive disabled:opacity-50 transition-colors shrink-0 hover:bg-destructive/10 p-2 rounded-lg"
-                        aria-label="Remove item"
+                        disabled={
+                          isUpdatingThis ||
+                          actionLoading ||
+                          cartItem.quantity >= cartItem.availableStock
+                        }
+                        className="p-2 disabled:opacity-50 hover:text-amber transition-colors"
                       >
-                        <Trash2 size={18} />
+                        <Plus size={16} />
                       </button>
                     </div>
 
@@ -216,7 +249,7 @@ export const CartPage = () => {
                       </div>
 
                       <p className="font-display font-semibold text-xl text-foreground">
-                        ₦{Number(cartItem.lineTotal).toLocaleString()}
+                        ₦{cartItem.lineTotal.toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -224,6 +257,15 @@ export const CartPage = () => {
               );
             })}
           </div>
+
+          {hasCheckoutIssues && (
+            <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
+              <p className="text-sm font-medium text-destructive">
+                Some items in your cart are unavailable or exceed current stock
+                levels. Please update your cart before checkout.
+              </p>
+            </div>
+          )}
 
           {/* Summary */}
           <aside className="space-y-5">
@@ -234,19 +276,26 @@ export const CartPage = () => {
 
               <div className="space-y-3.5 text-sm border-b border-border pb-5">
                 <div className="flex justify-between">
-                  <span className="font-medium text-muted-foreground">Items ({cart?.totalItems ?? 0})</span>
-                  <span className="font-semibold text-foreground">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
+                  <span className="font-medium text-muted-foreground">
+                    Items ({cart?.totalItems ?? 0})
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    ₦{Number(cart?.subtotal ?? 0).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-medium text-muted-foreground">Shipping</span>
-                  <span className="font-semibold text-green-600 dark:text-green-400">FREE</span>
+                  <span className="font-medium text-muted-foreground">
+                    Shipping
+                  </span>
+                  <span className="font-semibold text-green-600 dark:text-green-400">
+                    FREE
+                  </span>
                 </div>
               </div>
 
-              <div className="pt-5 flex justify-between font-display font-bold text-lg">
-                <span className="text-foreground">Total</span>
-                <span className="text-amber">₦{Number(cart?.subtotal ?? 0).toLocaleString()}</span>
-              </div>
+              <span className="text-amber">
+                ₦{(cart?.subtotal ?? 0).toLocaleString()}
+              </span>
 
               <div className="mt-6">
                 <Link to="/checkout">
@@ -263,7 +312,9 @@ export const CartPage = () => {
               <p className="text-xs font-semibold text-amber uppercase tracking-wide">
                 🔒 Secure Checkout
               </p>
-              <p className="text-xs text-muted-foreground mt-1">Powered by Paystack</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Powered by Paystack
+              </p>
             </div>
 
             {/* Continue shopping */}

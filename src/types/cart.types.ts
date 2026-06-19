@@ -1,21 +1,43 @@
 export interface CartItemProduct {
   id: string;
   name: string;
-  media: { id: string; url: string }[];
+  slug: string;
+  price: string;
+  stock: number;
+  status: string;
+
+  media: {
+    id: string;
+    url: string;
+  }[];
 }
 
 export interface CartItem {
   id: string;
-  itemId: string; // used for update/remove API calls
+  itemId: string;
+
   quantity: number;
-  unitPriceSnapshot: number | string; // price at time of adding
-  lineTotal: number | string; // quantity × unitPriceSnapshot
+
+  unitPrice: number;
+  lineTotal: number;
+
+  availableStock: number;
+  inStock: boolean;
+  unavailable: boolean;
+
   item: CartItemProduct;
 }
 
 export interface Cart {
   id: string;
+  status: string;
+  userId: string;
+
   items: CartItem[];
+
+  subtotal: number;
   totalItems: number;
-  subtotal: number | string;
+
+  createdAt: string;
+  updatedAt: string;
 }

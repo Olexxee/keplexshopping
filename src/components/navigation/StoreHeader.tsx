@@ -1,11 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { ShoppingCart, User, LogOut, UserCircle, Menu, X, Search } from "lucide-react";
+import { useCart } from "../../hooks/useCart";
 import { useMe } from "../../hooks/useAuth";
 import { useLogout } from "../../hooks/useAuth";
 
 export const StoreHeader = () => {
   const { data: user } = useMe();
+  const { data: cart } = useCart();
+  const cartCount = cart?.totalItems ?? 0;
   const { mutate: logout, isPending: loggingOut } = useLogout();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -14,7 +17,9 @@ export const StoreHeader = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Close dropdown on outside click
+  const badgeCount = cartCount > 99 ? "99+" : cartCount.toString();
+
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
@@ -47,7 +52,9 @@ export const StoreHeader = () => {
             {/* Logo - Left */}
             <Link to="/shop" className="flex items-center gap-3 group shrink-0">
               <div className="h-9 w-9 rounded-lg bg-gradient-amber flex items-center justify-center shadow-amber group-hover:shadow-glow transition-all duration-300">
-                <span className="text-white font-display font-bold text-lg">K</span>
+                <span className="text-white font-display font-bold text-lg">
+                  K
+                </span>
               </div>
               <div className="hidden sm:block">
                 <p className="font-display font-semibold text-xl tracking-tight text-foreground group-hover:text-amber transition-colors duration-300">
@@ -60,7 +67,10 @@ export const StoreHeader = () => {
             </Link>
 
             {/* Search Bar - Desktop (Centered) */}
-            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl mx-8">
+            <form
+              onSubmit={handleSearch}
+              className="hidden md:flex flex-1 max-w-xl mx-8"
+            >
               <div className="relative w-full">
                 <input
                   type="text"
@@ -92,11 +102,19 @@ export const StoreHeader = () => {
               </button>
 
               {/* Cart Icon */}
-              <Link to="/cart" className="relative group p-2 rounded-lg hover:bg-muted transition-colors">
-                <ShoppingCart size={22} className="text-foreground group-hover:text-amber transition-colors duration-200" />
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-amber text-white text-[10px] flex items-center justify-center font-medium shadow-amber">
-                  3
-                </span>
+              <Link
+                to="/cart"
+                className="relative group p-2 rounded-lg hover:bg-muted transition-colors"
+              >
+                <ShoppingCart
+                  size={22}
+                  className="text-foreground group-hover:text-amber transition-colors duration-200"
+                />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-amber text-white text-[10px] flex items-center justify-center font-medium shadow-amber">
+                    {badgeCount}
+                  </span>
+                )}
               </Link>
 
               {/* User Avatar + Dropdown (Desktop) */}
@@ -234,7 +252,9 @@ export const StoreHeader = () => {
                     <p className="font-display font-semibold text-foreground">
                       {user.fullName}
                     </p>
-                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {user.email}
+                    </p>
                   </div>
                   <Link
                     to="/profile"

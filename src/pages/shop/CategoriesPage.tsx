@@ -320,6 +320,8 @@ export const CatalogPage = () => {
                     {item.description}
                   </p>
 
+                  
+
                   {/* Footer with price and action */}
                   <div className="flex items-center justify-between mt-5 pt-4 border-t border-border">
                     <div>
